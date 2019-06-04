@@ -1,3 +1,5 @@
 /venv
 .vscode
 pathway-finder.code-workspace
+/__pycache__
+/utils/__pycache__
