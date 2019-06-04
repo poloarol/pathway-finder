@@ -12,6 +12,18 @@ from itertools import islice
 
 
 @dataclass
+class Organism:
+    """Store organism information."""
+
+    sciName: str
+    accession: str
+
+    def info(self) -> Tuple:
+        """Provide infomation pertaining to indentifying organism."""
+        return (self.sciName, self.accession)
+
+
+@dataclass
 class Gene:
     """Allow to capture the identifiers of a gene."""
 
@@ -19,6 +31,7 @@ class Gene:
     locus: str
     product: str
     prot_id: str
+    trans: str
     location: Tuple
     strand: int
 
@@ -29,23 +42,12 @@ class Gene:
 
     def values(self) -> Tuple:
         """Obtain all genomic information."""
-        f = (self.gene, self.locus, self.product, self.prot_id, self.location self.strand)
+        f = (self.gene, self.locus, self.product, self.prot_id. self.trans, self.location, self.strand)  # noqa
         return f
 
 
 GENE = NewType('GENE', Gene)
 
-
-@dataclass
-class Organism:
-    """Store organism information."""
-
-    sciName: str
-    accession: str
-
-    def info(self) -> Tuple:
-        """Provide infomation pertaining to indentifying organism."""
-        return (self.sciName, self.accession)
 
 @dataclass
 class Genome:
@@ -61,13 +63,17 @@ class Genome:
     def findGene(self, ident: str) -> List:
         """Find a gene by its identifier."""
         geneList = list()
+        for key in self.GENOME:
+            if ident in key:
+                geneList.push(key)
+        self.setCore(geneList[0])
         return geneList
 
-    def setCore(self, ident: str) -> None:
+    def setCore(self, ident: Tuple) -> None:
         self.core = ident
-    
-    def getCore(self) -> str:
-        return self.cores
+
+    def getCore(self) -> Tuple:
+        return self.GENOME[self.core][4]
 
     def build(self, ident: str, bp: int) -> List:
         """Build a genomic pathway based on identifier."""
@@ -124,3 +130,5 @@ class Genome:
             size: int = info.values()[4][1] - info.values()[4][1]  # calculate the size of the gene  # noqa
             length = length + size
             path.append(info)
+
+        return path

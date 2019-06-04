@@ -1,8 +1,25 @@
 """Entry point of program."""
 
-from utils.structure import Gene
-from utils.structures import Genome
+from reader import ReadGB
 from utils.connector import BioConnect
 
-def readFile(genbank):
-    """Read Genbank file and extract information and"""
+from typing import Dict
+
+
+class ReadFile():
+    """Read and Process GB file."""
+
+    def __init__(self, gbfile):
+        self._gb = gbfile
+        self.readGB = ReadGB(self._gb)
+        self.GENOME: Dict = dict()
+
+    def getGenome(self):
+        self.GENOME = self.readGB.readfile()
+
+
+def main(gbfile):
+    gb = BioConnect.load(gbfile)
+    rb = ReadFile(gbfile)
+    genome = rb.getGenome()
+    output = BioConnect.bioBlast(genome.getCore())

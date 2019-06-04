@@ -9,23 +9,24 @@ from Bio import SeqIO
 
 from typing import Dict, Tuple
 
+
 class ReadGB:
     """Read GB file and extract information."""
 
     def __init__(self, genbank):
         """Initialize the reader and store gb."""
         self._record = SeqIO.read(genbank, 'genbank')
-        self.GENOME = Genome()
+        self.GENOME: Dict = Genome()
         try:
-            self._org: Tuple = tuple(self._record.annotation, self._record.id)
-        except:
+            self._org = Organism(self._record.annotation, self._record.id)
+        except KeyError:
             # Throw exception if file is empty
             pass
-    
+
     def provideOrg(self) -> Tuple:
         """Provide indentifier about organism created."""
-        return self._org
-    
+        return self._org.info()
+
     def readfile(self) -> Dict:
         """Read the gb file and return a new Genome."""
         try:
@@ -33,20 +34,25 @@ class ReadGB:
             locus: str = 'N/A'
             product: str = 'N/A'
             gene: str = 'N/A'
+            translation: str = 'N/A'
             for feature in self._record.features:
-                for "CDS" in feature.type:
+                if "CDS" in feature.type:
                     for value in feature.qualifiers.keys():
                         if 'protein_id' in feature.qualifiers.keys():
-                            # feature.qualifiers['protein-id'][0]
-                            pass
+                            prot_id = feature.qualifiers['protein-id'][0]
                         if 'product' in feature.qualifiers.keys():
-                            pass
+                            product = feature.qualifiers['product'][0]
                         if 'gene' in feature.qualifiers.keys():
-                            pass
+                            gene = feature.qualifiers['gene'][0]
                         if 'locus_tag' in feature.qualifiers.keys():
-                            pass
+                            locus = feature.qualifiers['locus_tag'][0]
+                        if 'translation' in feature.qualifiers.keys():
+                            translation = feature.qualifiers['translation'][0]
                         strand: int = int(feature.strand, base=10)
-                        location: Tuple = (feature.location.start.position, feature.location.end.position)
-                        gene: GENE = Gene(gene, locus, product, prot_id, location, strand)
+                        location: Tuple = (feature.location.start.position, feature.location.end.position)  # noqa
+                        gene: GENE = Gene(gene, locus, product, prot_id, trans, location, strand)  # noqa
                         self.GENOME.addGene(gene)
+        except KeyError:
+            # if no CDS is found in the file or all features are empty.
+            pass
         return self.GENOME
