@@ -20,18 +20,32 @@ class Gene:
     product: str
     prot_id: str
     location: Tuple
+    strand: int
 
     def keys(self) -> Set:
+        """Obtain all keys."""
         # f = namedtuple('Info', 'Gene, Locus, Product, Protein')  # noqa
         return set(self.gene, self.locus, self.product, self.prot_id)
 
     def values(self) -> Tuple:
-        f = (self.gene, self.locus, self.product, self.prot_id, self.location)
+        """Obtain all genomic information."""
+        f = (self.gene, self.locus, self.product, self.prot_id, self.location self.strand)
         return f
 
 
 GENE = NewType('GENE', Gene)
 
+
+@dataclass
+class Organism:
+    """Store organism information."""
+
+    sciName: str
+    accession: str
+
+    def info(self) -> Tuple:
+        """Provide infomation pertaining to indentifying organism."""
+        return (self.sciName, self.accession)
 
 @dataclass
 class Genome:
@@ -40,17 +54,16 @@ class Genome:
     GENOME: Dict[Set, GENE] = field(default_factory=dict)
 
     def addGene(self, gene):
+        """Add  a new to the genome."""
         self.GENOME.update(gene.info(), gene.values())
 
     def findGene(self, ident: str) -> List:
-        """ Allows to find a list of all genes having a certain identifier. """
-
+        """Find a gene by its identifier."""
         geneList = list()
         return geneList
 
     def build(self, ident: str, bp: int) -> List:
-        """builds the genomic pathway based on identifier."""
-
+        """Build a genomic pathway based on identifier."""
         geneList: List = self.findGene(ident)
         if geneList:
             right: List = self.rbuild(geneList[0], len(geneList), bp)
@@ -59,7 +72,7 @@ class Genome:
         return geneList
 
     def rbuild(self, value: set, size: int, bp: int) -> List:
-        """ Generates a list of genes on the right of the core gene."""
+        """Build the right genomic pathway."""
         right: List = list()
         keys: List = self.GENOME.keys()
         indices = keys.index(value) if size == 1 else [i for i, x in enumerate(keys) if x == value]  # noqa
@@ -77,6 +90,7 @@ class Genome:
         return right
 
     def lbuild(self, value: set, size: int, bp: int) -> List:
+        """Build the left genomic pathway."""
         left: List = list()
         keys: List = self.GENOME.keys()
         keys.reverse()
@@ -93,6 +107,7 @@ class Genome:
         return left
 
     def paths(self, start, bp) -> List:
+        """Navigate via the genome in a cycle."""
         path = list()
         length = 0
 

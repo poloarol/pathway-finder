@@ -1,4 +1,4 @@
-""" utils/connector.py Connects to Genbank DB """
+"""utils/connector.py Connects to Genbank DB."""
 
 from Bio import Entrez
 from Bio.Blast import NCBIWWW
@@ -12,7 +12,7 @@ import urllib
 
 @dataclass
 class BioConnect:
-    """ Provides methods to download and run blast on the NCBI servers. """
+    """Provides methods to download and run blast on the NCBI servers."""
 
     expect: int
     hit: int
@@ -23,7 +23,7 @@ class BioConnect:
     blastdb = 'nr'
 
     def load(self, accession):
-        """ Download Genbank record from NCBI-Genbank. """
+        """Download Genbank record from NCBI-Genbank."""
         try:
             handle = Entrez.efetch(self.db, accession, "gbwithparts", 'txt')
             return handle
@@ -31,6 +31,7 @@ class BioConnect:
             print(error.read())
 
     def bioBlast(self, seq) -> List:
+        """Run blast on the NCBI servers."""
         handle = NCBIWWW.qblast(self.flavour, self.blastdb, seq, self.fileFormat, self.hit, self.expect, self.service)  # noqa
         record = NCBIXML.parse(handle)
         numList = list()
