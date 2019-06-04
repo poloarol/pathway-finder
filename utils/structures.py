@@ -52,6 +52,7 @@ class Genome:
     """Allow to simulate bacterial genome, using a dictionary."""
 
     GENOME: Dict[Set, GENE] = field(default_factory=dict)
+    core: str = ''
 
     def addGene(self, gene):
         """Add  a new to the genome."""
@@ -61,6 +62,12 @@ class Genome:
         """Find a gene by its identifier."""
         geneList = list()
         return geneList
+
+    def setCore(self, ident: str) -> None:
+        self.core = ident
+    
+    def getCore(self) -> str:
+        return self.cores
 
     def build(self, ident: str, bp: int) -> List:
         """Build a genomic pathway based on identifier."""
