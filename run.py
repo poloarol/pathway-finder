@@ -19,7 +19,12 @@ class ReadFile():
 
 
 def main(gbfile):
-    gb = BioConnect.load(gbfile)
-    rb = ReadFile(gbfile)
-    genome = rb.getGenome()
-    output = BioConnect.bioBlast(genome.getCore())
+    bconnect = BioConnect(10, 100)
+    gbfile = bconnect.load(gbfile)
+    rb = ReadGB(gbfile)
+    rb.readfile()
+    # output = BioConnect.bioBlast(genome.getCore())
+
+
+if __name__ == '__main__':
+    main('AL590842.1')

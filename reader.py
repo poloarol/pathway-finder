@@ -18,7 +18,7 @@ class ReadGB:
         self._record = SeqIO.read(genbank, 'genbank')
         self.GENOME: Dict = Genome()
         try:
-            self._org = Organism(self._record.annotation, self._record.id)
+            self._org = Organism(self._record.annotations['organism'], self._record.annotations['accessions'])  # noqa
         except KeyError:
             # Throw exception if file is empty
             pass
@@ -50,9 +50,10 @@ class ReadGB:
                             translation = feature.qualifiers['translation'][0]
                         strand: int = int(feature.strand, base=10)
                         location: Tuple = (feature.location.start.position, feature.location.end.position)  # noqa
-                        gene: GENE = Gene(gene, locus, product, prot_id, trans, location, strand)  # noqa
+                        gene: GENE = Gene(gene, locus, product, prot_id, translation, location, strand)  # noqa
                         self.GENOME.addGene(gene)
         except KeyError:
             # if no CDS is found in the file or all features are empty.
             pass
+            print(1)
         return self.GENOME

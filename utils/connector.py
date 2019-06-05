@@ -9,6 +9,8 @@ from typing import List
 
 import urllib
 
+Entrez.email = 'adjon081@uottawa.ca'
+
 
 @dataclass
 class BioConnect:
@@ -25,7 +27,7 @@ class BioConnect:
     def load(self, accession):
         """Download Genbank record from NCBI-Genbank."""
         try:
-            handle = Entrez.efetch(self.db, accession, "gbwithparts", 'txt')
+            handle = Entrez.efetch(db=self.db, id=accession, rettype="gbwithparts", retmode='txt')
             return handle
         except urllib.error.HTTPError as error:
             print(error.read())
