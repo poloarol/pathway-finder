@@ -1,7 +1,9 @@
 """Entry point of program."""
 
 from reader import ReadGB
-from utils.connector import BioConnect
+from utils import connector
+
+BioConnect = connector.BioConnect
 
 
 class ReadFile():

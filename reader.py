@@ -1,13 +1,14 @@
 """Read GB file."""
 
-from utils.structures import Gene
-from utils.structures import Genome
-from utils.structures import Organism
-from utils.structures import GENE
+from utils import structures
 
 from Bio import SeqIO
-
 from typing import Dict, Tuple
+
+Genome = structures.Genome
+Organim = structures.Organism
+Gene = structures.Gene
+GENE = structures.GENE
 
 
 class ReadGB:
