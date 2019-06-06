@@ -3,18 +3,18 @@
 from reader import ReadGB
 from utils.connector import BioConnect
 
-from typing import Dict
-
 
 class ReadFile():
     """Read and Process GB file."""
 
     def __init__(self, gbfile):
+        """Initialize the reader."""
         self._gb = gbfile
         self.readGB = ReadGB(self._gb)
         # self.GENOME: Dict = dict()
 
     def getGenome(self):
+        """Obtain the genome built from passed gb file."""
         self.GENOME = self.readGB.readfile()
 
 
@@ -31,7 +31,7 @@ def main(gbfile, coreGene, bp):
 
 
 if __name__ == '__main__':
-    main('AP018392.1', "SONE68_0006", 15000)
+    main('CP013839.1', "MGAS23530_0009", 5000)
 
 # find small genome and build unittest based on that
 # Mycoplasma genitalium

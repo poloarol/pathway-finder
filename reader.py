@@ -18,7 +18,7 @@ class ReadGB:
         self._record = SeqIO.read(genbank, 'genbank')
         self.GENOME = Genome()
         try:
-            self._org = Organism(self._record.organism, self._record.accessions)  # noqa
+            self._org = Organism(self._record.annotations['organism'], self._record.annotations['accessions'][0])  # noqa
         except KeyError:
             raise KeyError('Organim and Accession keys are nor present.')
 
