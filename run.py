@@ -12,19 +12,29 @@ class ReadFile():
     def __init__(self, gbfile):
         self._gb = gbfile
         self.readGB = ReadGB(self._gb)
-        self.GENOME: Dict = dict()
+        # self.GENOME: Dict = dict()
 
     def getGenome(self):
         self.GENOME = self.readGB.readfile()
 
 
-def main(gbfile):
+def main(gbfile, coreGene, bp):
     bconnect = BioConnect(10, 100)
     gbfile = bconnect.load(gbfile)
     rb = ReadGB(gbfile)
-    rb.readfile()
-    # output = BioConnect.bioBlast(genome.getCore())
+    genome = rb.readfile()
+    pathway = genome.build(coreGene, bp)
+    coregene = genome.getCore()
+    output = bconnect.bioBlast(coregene)
+    print(output)
+    # print(output)
 
 
 if __name__ == '__main__':
-    main('AL590842.1')
+    main('AP018392.1', "SONE68_0006", 15000)
+
+# find small genome and build unittest based on that
+# Mycoplasma genitalium
+# Vibrio cholerae
+# Escherichia coli
+# Bacilus subtilis

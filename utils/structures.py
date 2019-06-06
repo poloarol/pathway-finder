@@ -1,4 +1,4 @@
-""" Definition of the various Data Structures used in the program. """
+"""Definition of the various Data Structures used in the program. """
 from dataclasses import dataclass
 from dataclasses import field
 from typing import Tuple
@@ -35,14 +35,14 @@ class Gene:
     location: Tuple
     strand: int
 
-    def keys(self) -> Set:
+    def keys(self) -> Tuple:
         """Obtain all keys."""
         # f = namedtuple('Info', 'Gene, Locus, Product, Protein')  # noqa
-        return set(self.gene, self.locus, self.product, self.prot_id)
+        return (self.gene, self.locus, self.product, self.prot_id)
 
     def values(self) -> Tuple:
         """Obtain all genomic information."""
-        f = (self.gene, self.locus, self.product, self.prot_id. self.trans, self.location, self.strand)  # noqa
+        f = (self.gene, self.locus, self.product, self.prot_id, self.trans, self.location, self.strand)  # noqa
         return f
 
 
@@ -53,19 +53,19 @@ GENE = NewType('GENE', Gene)
 class Genome:
     """Allow to simulate bacterial genome, using a dictionary."""
 
-    GENOME: Dict[Set, GENE] = field(default_factory=dict)
+    GENOME: Dict[Tuple, GENE] = field(default_factory=dict)
     core: str = ''
 
     def addGene(self, gene):
         """Add  a new to the genome."""
-        self.GENOME.update(gene.info(), gene.values())
+        self.GENOME[gene.keys()] = gene.values()
 
     def findGene(self, ident: str) -> List:
         """Find a gene by its identifier."""
         geneList = list()
-        for key in self.GENOME:
-            if ident in key:
-                geneList.push(key)
+        for keys in self.GENOME:
+            if ident in keys:
+                geneList.append(keys)
         self.setCore(geneList[0])
         return geneList
 
@@ -87,7 +87,7 @@ class Genome:
     def rbuild(self, value: set, size: int, bp: int) -> List:
         """Build the right genomic pathway."""
         right: List = list()
-        keys: List = self.GENOME.keys()
+        keys: List = list(self.GENOME)
         indices = keys.index(value) if size == 1 else [i for i, x in enumerate(keys) if x == value]  # noqa
         # To speed it up, NumPy can be used (https://stackoverflow.com/questions/6294179/how-to-find-all-occurrences-of-an-element-in-a-list)  # noqa
         # as explained
@@ -105,7 +105,7 @@ class Genome:
     def lbuild(self, value: set, size: int, bp: int) -> List:
         """Build the left genomic pathway."""
         left: List = list()
-        keys: List = self.GENOME.keys()
+        keys: List = list(self.GENOME)
         keys.reverse()
         indices = keys.index(value) if size == 1 else [i for i, x in enumerate(keys) if x == value]  # noqa
         kcycle = cycle(keys)
@@ -127,7 +127,7 @@ class Genome:
         while length < bp:
             gene: GENE = next(start)
             info: Tuple = self.GENOME[gene]
-            size: int = info.values()[4][1] - info.values()[4][1]  # calculate the size of the gene  # noqa
+            size: int = int(info[5][1]) - int(info[5][0])  # calculate the size of the gene  # noqa
             length = length + size
             path.append(info)
 
