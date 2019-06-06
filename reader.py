@@ -18,11 +18,9 @@ class ReadGB:
         self._record = SeqIO.read(genbank, 'genbank')
         self.GENOME = Genome()
         try:
-            # self._org = Organism(self._record.source, self._record.accessions)
-            pass
+            self._org = Organism(self._record.organism, self._record.accessions)  # noqa
         except KeyError:
-            # Throw exception if file is empty
-            pass
+            raise KeyError('Organim and Accession keys are nor present.')
 
     def provideOrg(self) -> Tuple:
         """Provide indentifier about organism created."""
@@ -49,10 +47,9 @@ class ReadGB:
                     if 'protein_id' in recs.qualifiers:
                         prot_id = recs.qualifiers['protein_id'][0]
                     strand: int = int(recs.strand)
-                    location: Tuple = (recs.location.start.position, recs.location.end.position)
-                    g: GENE = Gene(gene, locus, product, prot_id, translation, location, strand)
+                    location: Tuple = (recs.location.start.position, recs.location.end.position)  # noqa
+                    g: GENE = Gene(gene, locus, product, prot_id, translation, location, strand)  # noqa
                     self.GENOME.addGene(g)
         except KeyError:
-            # if no CDS is found in the file or all features are empty.
-            pass
+            raise KeyError('CDS key not found.')
         return self.GENOME

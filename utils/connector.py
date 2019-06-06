@@ -13,6 +13,7 @@ import ssl
 Entrez.email = 'adjon081@uottawa.ca'
 ssl._create_default_https_context = ssl._create_unverified_context
 
+
 @dataclass
 class BioConnect:
     """Provides methods to download and run blast on the NCBI servers."""
@@ -28,7 +29,7 @@ class BioConnect:
     def load(self, accession):
         """Download Genbank record from NCBI-Genbank."""
         try:
-            handle = Entrez.efetch(db=self.db, id=accession, rettype="gbwithparts", retmode='txt')
+            handle = Entrez.efetch(db=self.db, id=accession, rettype="gbwithparts", retmode='txt')  # noqa
             return handle
         except urllib.error.HTTPError as error:
             print(error.read())
