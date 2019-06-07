@@ -3,8 +3,10 @@
 from reader import ReadGB
 from utils import connector
 
-BioConnect = connector.BioConnect
+from typing import List
 
+BioConnect = connector.BioConnect
+bconnect = None
 
 class ReadFile():
     """Read and Process GB file."""
@@ -20,7 +22,7 @@ class ReadFile():
         self.GENOME = self.readGB.readfile()
 
 
-def main(gbfile, coreGene, bp):
+def main(gbfile, coreGene, bp, similarity):
     bconnect = BioConnect(10, 100)
     gbfile = bconnect.load(gbfile)
     rb = ReadGB(gbfile)
@@ -28,12 +30,27 @@ def main(gbfile, coreGene, bp):
     pathway = genome.build(coreGene, bp)
     coregene = genome.getCore()
     output = bconnect.bioBlast(coregene)
-    print(output)
-    # print(output)
+    pathways = repProcedure(output, bp, coregene, similarity)
+    pathway.append(pathways)
+    print(pathway)
 
+
+def repProcedure(items: List, bp: int, coreGene: str, similarity: int) -> List:
+    bpathway: List = list()
+    for item in items:
+        bconnect = BioConnect(10, 100)
+        gbfile = bconnect.load(item)
+        rb = ReadGB(gbfile)
+        genome = rb.readfile()
+        coreGene = genome.findCoreGeneBySimilarity(coreGene, similarity)
+        for i in coreGene:
+            genome.setCore(i)
+            pathway = genome.build(coreGene, bp)
+            bpathway.append(pathway)
+    return bpathway
 
 if __name__ == '__main__':
-    main('CP013839.1', "MGAS23530_0009", 5000)
+    main('CP013839.1', "MGAS23530_0009", 5000, 0.75)
 
 # find small genome and build unittest based on that
 # Mycoplasma genitalium

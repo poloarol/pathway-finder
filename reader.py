@@ -6,7 +6,7 @@ from Bio import SeqIO
 from typing import Dict, Tuple
 
 Genome = structures.Genome
-Organim = structures.Organism
+Organism = structures.Organism
 Gene = structures.Gene
 GENE = structures.GENE
 

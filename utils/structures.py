@@ -7,6 +7,7 @@ from typing import Dict
 from typing import List
 from itertools import cycle
 from itertools import islice
+from Levenshtein import ratio
 # from collections import namedtuple
 
 
@@ -67,6 +68,16 @@ class Genome:
                 geneList.append(keys)
         self.setCore(geneList[0])
         return geneList
+
+    def findCoreGeneBySimilarity(self, seq: str, similarity: float) -> List:
+        """Determine the core gene in blast output by percentage similarity of seq compared."""
+        geneList: List = list()
+        for keys in self.GENOME:
+            print(self.GENOME[keys][4])
+            # if val >= similarity:
+            #     geneList.append(self.GENOME[keys])
+            return geneList
+
 
     def setCore(self, ident: Tuple) -> None:
         self.core = ident
