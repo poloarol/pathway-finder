@@ -42,8 +42,8 @@ def repProcedure(items: List, bp: int, coreGene: str, similarity: int) -> List:
         gbfile = bconnect.load(item)
         rb = ReadGB(gbfile)
         genome = rb.readfile()
-        coreGene = genome.findCoreGeneBySimilarity(coreGene, similarity)
-        for i in coreGene:
+        coreGeneList = genome.findCoreGeneBySimilarity(coreGene, similarity)
+        for i in coreGeneList:
             genome.setCore(i)
             pathway = genome.build(coreGene, bp)
             bpathway.append(pathway)

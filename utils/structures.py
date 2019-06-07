@@ -7,8 +7,9 @@ from typing import Dict
 from typing import List
 from itertools import cycle
 from itertools import islice
-from Levenshtein import ratio
 # from collections import namedtuple
+
+#import Levenshtein
 
 
 @dataclass
@@ -73,10 +74,10 @@ class Genome:
         """Determine the core gene in blast output by percentage similarity of seq compared."""
         geneList: List = list()
         for keys in self.GENOME:
-            print(self.GENOME[keys][4])
-            # if val >= similarity:
-            #     geneList.append(self.GENOME[keys])
-            return geneList
+            val = Levenshtein.ratio(self.GENOME[keys][4], seq)
+            if val >= similarity:
+                geneList.append(self.GENOME[keys])
+        return geneList
 
 
     def setCore(self, ident: Tuple) -> None:
