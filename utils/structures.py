@@ -9,7 +9,7 @@ from itertools import cycle
 from itertools import islice
 # from collections import namedtuple
 
-#import Levenshtein
+import Levenshtein
 
 
 @dataclass
@@ -63,24 +63,26 @@ class Genome:
 
     def findGene(self, ident: str) -> List:
         """Find a gene by its identifier."""
-        geneList = list()
+        genes = list()
         for keys in self.GENOME:
             if ident in keys:
-                geneList.append(keys)
-        self.setCore(geneList[0])
-        return geneList
+                genes.append(keys)
+        return genes
 
-    def findCoreGeneBySimilarity(self, seq: str, similarity: float) -> List:
+    def findCoreGeneBySimilarity(self, seq: str, similarity: float):
         """Determine the core gene in blast output by percentage similarity of seq compared."""
-        geneList: List = list()
+        genes: List = list()
         for keys in self.GENOME:
             val = Levenshtein.ratio(self.GENOME[keys][4], seq)
             if val >= similarity:
-                geneList.append(self.GENOME[keys])
-        return geneList
+                genes.append(keys)
+        return genes
 
 
     def setCore(self, ident: Tuple) -> None:
+        self.__setCore__(ident)
+
+    def __setCore__(self, ident: Tuple) -> None:
         self.core = ident
 
     def getCore(self) -> Tuple:
@@ -88,12 +90,14 @@ class Genome:
 
     def build(self, ident: str, bp: int) -> List:
         """Build a genomic pathway based on identifier."""
-        geneList: List = self.findGene(ident)
-        if geneList:
-            right: List = self.rbuild(geneList[0], len(geneList), bp)
-            left: List = self.lbuild(geneList[0], len(geneList), bp)
-            return [a + b for a, b in zip(right, left)]
-        return geneList
+        genes: List = self.findGene(ident)
+        self.setCore(genes[0])
+        if genes:
+            right: List = self.rbuild(genes[0], len(genes), bp)
+            left: List = self.lbuild(genes[0], len(genes), bp)
+            right.append(left)
+            return right
+        return genes
 
     def rbuild(self, value: set, size: int, bp: int) -> List:
         """Build the right genomic pathway."""
@@ -129,6 +133,14 @@ class Genome:
             start = islice(kcycle, indices, None)
             left = self.paths(start, bp)
         return left
+
+
+    def buildsimilarity(self, value: set, bp: int):
+        """After setting core gene by similarity, use this to build pathway."""
+        right: List = self.rbuild(value, 1, bp)
+        left: List = self.lbuild(value, 1, bp)
+        right.append(left)
+        return right
 
     def paths(self, start, bp) -> List:
         """Navigate via the genome in a cycle."""

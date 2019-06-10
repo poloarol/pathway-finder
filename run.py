@@ -5,6 +5,8 @@ from utils import connector
 
 from typing import List
 
+import time
+
 BioConnect = connector.BioConnect
 bconnect = None
 
@@ -27,12 +29,15 @@ def main(gbfile, coreGene, bp, similarity):
     gbfile = bconnect.load(gbfile)
     rb = ReadGB(gbfile)
     genome = rb.readfile()
-    pathway = genome.build(coreGene, bp)
+    pathways = genome.build(coreGene, bp)
     coregene = genome.getCore()
     output = bconnect.bioBlast(coregene)
-    pathways = repProcedure(output, bp, coregene, similarity)
-    pathway.append(pathways)
-    print(pathway)
+    bpathways = repProcedure(output, bp, coregene, similarity)
+    pathways.append(bpathways)
+    for pathway in pathways:
+        print("==============================================================================")
+        print(pathway)
+        print("==============================================================================")
 
 
 def repProcedure(items: List, bp: int, coreGene: str, similarity: int) -> List:
@@ -42,11 +47,12 @@ def repProcedure(items: List, bp: int, coreGene: str, similarity: int) -> List:
         gbfile = bconnect.load(item)
         rb = ReadGB(gbfile)
         genome = rb.readfile()
-        coreGeneList = genome.findCoreGeneBySimilarity(coreGene, similarity)
-        for i in coreGeneList:
-            genome.setCore(i)
-            pathway = genome.build(coreGene, bp)
-            bpathway.append(pathway)
+        genes: List = genome.findCoreGeneBySimilarity(coreGene, similarity)
+        if genes:
+            for gene in genes:
+                genome.setCore(gene)
+                bpathway.append(genome.buildsimilarity(gene, bp))
+        time.sleep(3)
     return bpathway
 
 if __name__ == '__main__':
