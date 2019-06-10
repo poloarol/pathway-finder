@@ -4,6 +4,7 @@ from reader import ReadGB
 from utils import connector
 
 from typing import List
+from itertools import chain
 
 import time
 
@@ -34,6 +35,7 @@ def main(gbfile, coreGene, bp, similarity):
     output = bconnect.bioBlast(coregene)
     bpathways = repProcedure(output, bp, coregene, similarity)
     pathways.append(bpathways)
+    pathways = list(chain.from_iterable(pathways))
     for pathway in pathways:
         print("==============================================================================")
         print(pathway)
@@ -42,6 +44,7 @@ def main(gbfile, coreGene, bp, similarity):
 
 def repProcedure(items: List, bp: int, coreGene: str, similarity: int) -> List:
     bpathway: List = list()
+    counter: int = 0
     for item in items:
         bconnect = BioConnect(10, 100)
         gbfile = bconnect.load(item)
@@ -52,7 +55,9 @@ def repProcedure(items: List, bp: int, coreGene: str, similarity: int) -> List:
             for gene in genes:
                 genome.setCore(gene)
                 bpathway.append(genome.buildsimilarity(gene, bp))
-        time.sleep(3)
+        counter = counter + 1
+        if(counter % 3 == 0):  # Used because of NCBI's policy on requests without API key. with API key, change to 10
+            time.sleep(3)
     return bpathway
 
 if __name__ == '__main__':
