@@ -4,7 +4,7 @@ with open("README.md", "r") as f:
     long_description = f.read()
 
 setuptools.setup(
-    name="pathway-finder-polo316",
+    name="pathway-finder",
     version="0.0.1",
     author="Paul Wambo",
     author_email="adjon081@uottawa.ca",

@@ -7,9 +7,11 @@ from typing import List
 from itertools import chain
 
 import time
+import sys
 
 BioConnect = connector.BioConnect
 bconnect = None
+
 
 class ReadFile():
     """Read and Process GB file."""
@@ -30,6 +32,8 @@ def main(gbfile, coreGene, bp, similarity):
     gbfile = bconnect.load(gbfile)
     rb = ReadGB(gbfile)
     genome = rb.readfile()
+    if not genome:
+        sys.exit()
     pathways = genome.build(coreGene, bp)
     coregene = genome.getCore()
     output = bconnect.bioBlast(coregene)
@@ -37,9 +41,9 @@ def main(gbfile, coreGene, bp, similarity):
     pathways.append(bpathways)
     pathways = list(chain.from_iterable(pathways))
     for pathway in pathways:
-        print("==============================================================================")
+        print("===============================================")
         print(pathway)
-        print("==============================================================================")
+        print("===============================================")
 
 
 def repProcedure(items: List, bp: int, coreGene: str, similarity: int) -> List:
@@ -50,6 +54,8 @@ def repProcedure(items: List, bp: int, coreGene: str, similarity: int) -> List:
         gbfile = bconnect.load(item)
         rb = ReadGB(gbfile)
         genome = rb.readfile()
+        if not genome:
+            sys.exit()
         genes: List = genome.findCoreGeneBySimilarity(coreGene, similarity)
         if genes:
             for gene in genes:
@@ -59,6 +65,7 @@ def repProcedure(items: List, bp: int, coreGene: str, similarity: int) -> List:
         if(counter % 3 == 0):  # Used because of NCBI's policy on requests without API key. with API key, change to 10
             time.sleep(3)
     return bpathway
+
 
 if __name__ == '__main__':
     main('CP013839.1', "MGAS23530_0009", 5000, 0.75)
