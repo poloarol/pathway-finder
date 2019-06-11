@@ -4,7 +4,6 @@ from utils import connector
 from utils import reader
 
 from typing import List
-from itertools import chain
 
 import time
 import sys
@@ -15,13 +14,29 @@ ReadGB = reader.ReadGB
 
 
 class ReadFile():
-    """Read and Process GB file."""
+    """
+    Read and Process GB file
+
+    ...
+
+    Attributes
+    ----------
+    _gb : str
+        accession number of GB file, to download file
+    
+    readGB : Object
+        Provides methods to read  GB files
+    
+    Methods
+    -------
+    getGenome():
+        provides the complete genome of organism
+    """
 
     def __init__(self, gbfile):
         """Initialize the reader."""
         self._gb = gbfile
         self.readGB = ReadGB(self._gb)
-        # self.GENOME: Dict = dict()
 
     def getGenome(self):
         """Obtain the genome built from passed gb file."""
@@ -40,11 +55,14 @@ def main(gbfile, coreGene, bp, similarity):
     output = bconnect.bioBlast(coregene)
     bpathways = repProcedure(output, bp, coregene, similarity)
     pathways.append(bpathways)
-
-    # for pathway in bpathways:
-    #     print("===============================================")
-    #     print(type(pathway))
-    #     print("===============================================")
+    # count = 0
+    # for pathway in pathways:
+    #     if count < 5:
+    #         print("===============================================")
+    #         result = [x if isinstance(x[0], tuple) else [x] for x in pathway]
+    #         print(result)
+    #         print("===============================================")
+    #         count = count + 1
 
 
 def repProcedure(items: List, bp: int, coreGene: str, similarity: int) -> List:
@@ -63,7 +81,7 @@ def repProcedure(items: List, bp: int, coreGene: str, similarity: int) -> List:
                 genome.setCore(gene)
                 bpathway.append(genome.buildsimilarity(gene, bp))
         counter = counter + 1
-        if(counter % 3 == 0):  # Used because of NCBI's policy on requests without API key. with API key, change to 10
+        if(counter % 3 == 0):  # Used because of NCBI's policy on requests without API key. with API key, change to 10  # noqa
             time.sleep(3)
     return bpathway
 

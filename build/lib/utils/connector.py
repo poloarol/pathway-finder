@@ -16,7 +16,35 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 @dataclass
 class BioConnect:
-    """Provides methods to download and run blast on the NCBI servers."""
+    """
+    Provides methods to download and run blast on the NCBI servers.
+
+    ...
+
+    Attributes
+    ----------
+    expect : int
+        Expected value of blast output
+    hit : int
+        Hit size of blast output i.e. How many organism are expected
+    db : str
+        NCBI DataBase to be used. Set to Nucleotide
+    fileFormat : str
+        Expected format of blast output. Set to XML
+    service : str
+        Type of blast to be performed. Set to PSI Blast
+    blastdb: str
+        The blast db to be used. Set to Non-Redundant
+
+    Methods
+    -------
+    load(accession=str)
+        Provides access to the NCBI DB via the E-Utils params to
+        obtain files
+    bioBlast(seq: str)
+        Performs a online psi-blast using a provided sequence
+
+    """
 
     expect: int
     hit: int

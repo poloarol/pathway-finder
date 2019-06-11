@@ -113,7 +113,7 @@ class Genome:
         if genes:
             right: List = self.rbuild(genes[0], len(genes), bp)
             left: List = self.lbuild(genes[0], len(genes), bp)
-            right.extend(left)
+            right.append(left)
             return right
         return genes
 
@@ -130,7 +130,7 @@ class Genome:
         if isinstance(indices, list):
             for i in indices:
                 start = islice(kcycle, indices, None)
-                right.extend(self.paths(start, bp))
+                right.append(self.paths(start, bp))
         else:
             start = islice(kcycle, indices, None)
             right = self.paths(start, bp)
@@ -147,7 +147,7 @@ class Genome:
         if isinstance(indices, list):
             for i in indices:
                 start = islice(kcycle, indices, None)
-                left.extend(self.paths(start, bp))
+                left.append(self.paths(start, bp))
         else:
             start = islice(kcycle, indices, None)
             left = self.paths(start, bp)
@@ -157,7 +157,7 @@ class Genome:
         """After setting core gene by similarity, use this to build pathway."""
         right: List = self.rbuild(value, 1, bp)
         left: List = self.lbuild(value, 1, bp)
-        right.extend(left)
+        right.append(left)
         return right
 
     def paths(self, start, bp) -> List:
@@ -170,6 +170,6 @@ class Genome:
             info: Tuple = self.GENOME[gene]
             size: int = int(info[5][1]) - int(info[5][0])  # calculate the size of the gene  # noqa
             length = length + size
-            path.extend(info)
+            path.append(info)
 
         return path

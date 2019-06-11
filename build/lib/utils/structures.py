@@ -14,7 +14,23 @@ import Levenshtein
 
 @dataclass
 class Organism:
-    """Store organism information."""
+    """
+    Store organism information
+
+    ...
+
+    Attributes
+    ----------
+    sciName: str
+        Scientific name of the organism
+    accession: str
+        Accession number of the organims
+
+    Methods
+    -------
+    info()
+        Provides information about the organism in question
+    """
 
     sciName: str
     accession: str
@@ -70,7 +86,7 @@ class Genome:
         return genes
 
     def findCoreGeneBySimilarity(self, seq: str, similarity: float):
-        """Determine the core gene in blast output by percentage similarity of seq compared."""
+        """Determine the core gene in blast output by percentage similarity of seq compared."""  # noqa
         genes: List = list()
         for keys in self.GENOME:
             val = Levenshtein.ratio(self.GENOME[keys][4], seq)
@@ -78,14 +94,16 @@ class Genome:
                 genes.append(keys)
         return genes
 
-
     def setCore(self, ident: Tuple) -> None:
+        """Public method to set Genome core gene."""
         self.__setCore__(ident)
 
     def __setCore__(self, ident: Tuple) -> None:
+        """Private method to set Genome core gene."""
         self.core = ident
 
     def getCore(self) -> Tuple:
+        """Provides the core genome's core gene"""
         return self.GENOME[self.core][4]
 
     def build(self, ident: str, bp: int) -> List:
@@ -104,12 +122,13 @@ class Genome:
         right: List = list()
         keys: List = list(self.GENOME)
         indices = keys.index(value) if size == 1 else [i for i, x in enumerate(keys) if x == value]  # noqa
-        # To speed it up, NumPy can be used (https://stackoverflow.com/questions/6294179/how-to-find-all-occurrences-of-an-element-in-a-list)  # noqa
+        # TODO: To speed it up, NumPy can be used 
+        # (https://stackoverflow.com/questions/6294179/how-to-find-all-occurrences-of-an-element-in-a-list)
         # as explained
         kcycle = cycle(keys)  # itertool.cycle, to cycle over the list until desired length or queried gene is met again.  # noqa
 
         if isinstance(indices, list):
-            for i in len(indices):
+            for i in indices:
                 start = islice(kcycle, indices, None)
                 right.append(self.paths(start, bp))
         else:
@@ -126,14 +145,13 @@ class Genome:
         kcycle = cycle(keys)
 
         if isinstance(indices, list):
-            for i in len(indices):
+            for i in indices:
                 start = islice(kcycle, indices, None)
                 left.append(self.paths(start, bp))
         else:
             start = islice(kcycle, indices, None)
             left = self.paths(start, bp)
         return left
-
 
     def buildsimilarity(self, value: set, bp: int):
         """After setting core gene by similarity, use this to build pathway."""
