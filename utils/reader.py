@@ -1,18 +1,42 @@
 """Read GB file."""
 
-from utils import structures
+from .structures import Genome
+# from .structures import Organism
+from .structures import Gene
+from .structures import GENE
 
 from Bio import SeqIO
 from typing import Dict, Tuple
 
-Genome = structures.Genome
-Organism = structures.Organism
-Gene = structures.Gene
-GENE = structures.GENE
+# Genome = structures.Genome
+# Organism = structures.Organism
+# Gene = structures.Gene
+# GENE = structures.GENE
 
 
 class ReadGB:
-    """Read GB file and extract information."""
+    """
+    Read GB file and extract information
+
+    ...
+
+    Attributes
+    ----------
+    flag : bool
+        Used to detect error in parsing Gb file
+    _record : File Object
+        Result of the SeqIO.parse() from biopython
+    GENOME : Genome()
+        Organisms genome to store genes as key-value pairs
+
+    Methods
+    -------
+    provideOrg()
+        Gives information about the organism
+    readfile()
+        Parses the GB file, extract useful features and builds genome
+
+    """
 
     def __init__(self, genbank):
         """Initialize the reader and store gb."""

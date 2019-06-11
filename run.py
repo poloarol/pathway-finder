@@ -1,7 +1,7 @@
 """Entry point of program."""
 
-from reader import ReadGB
 from utils import connector
+from utils import reader
 
 from typing import List
 from itertools import chain
@@ -11,6 +11,7 @@ import sys
 
 BioConnect = connector.BioConnect
 bconnect = None
+ReadGB = reader.ReadGB
 
 
 class ReadFile():
@@ -39,11 +40,11 @@ def main(gbfile, coreGene, bp, similarity):
     output = bconnect.bioBlast(coregene)
     bpathways = repProcedure(output, bp, coregene, similarity)
     pathways.append(bpathways)
-    pathways = list(chain.from_iterable(pathways))
-    for pathway in pathways:
-        print("===============================================")
-        print(pathway)
-        print("===============================================")
+
+    # for pathway in bpathways:
+    #     print("===============================================")
+    #     print(type(pathway))
+    #     print("===============================================")
 
 
 def repProcedure(items: List, bp: int, coreGene: str, similarity: int) -> List:
