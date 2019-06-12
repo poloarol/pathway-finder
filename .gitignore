@@ -4,5 +4,5 @@ pathway-finder.code-workspace
 /__pycache__
 /utils/__pycache__
 /pathway_finder.egg-info
-/build
-/dist
+/build/
+/dist/
