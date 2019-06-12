@@ -4,6 +4,7 @@ from utils import connector
 from utils import reader
 
 from typing import List
+from itertools import chain
 
 import time
 import sys
@@ -23,10 +24,10 @@ class ReadFile():
     ----------
     _gb : str
         accession number of GB file, to download file
-    
+
     readGB : Object
         Provides methods to read  GB files
-    
+
     Methods
     -------
     getGenome():
@@ -50,19 +51,15 @@ def main(gbfile, coreGene, bp, similarity):
     genome = rb.readfile()
     if not genome:
         sys.exit()
-    pathways = genome.build(coreGene, bp)
+    pathway = genome.build(coreGene, bp)
+    pathways = flatten(pathway)
     coregene = genome.getCore()
     output = bconnect.bioBlast(coregene)
     bpathways = repProcedure(output, bp, coregene, similarity)
-    pathways.append(bpathways)
-    # count = 0
-    # for pathway in pathways:
-    #     if count < 5:
-    #         print("===============================================")
-    #         result = [x if isinstance(x[0], tuple) else [x] for x in pathway]
-    #         print(result)
-    #         print("===============================================")
-    #         count = count + 1
+    bpathways.append(pathways)
+
+    # TODO : Add script to call the writter file
+    # so as to generate gb file in the output directory
 
 
 def repProcedure(items: List, bp: int, coreGene: str, similarity: int) -> List:
@@ -79,11 +76,19 @@ def repProcedure(items: List, bp: int, coreGene: str, similarity: int) -> List:
         if genes:
             for gene in genes:
                 genome.setCore(gene)
-                bpathway.append(genome.buildsimilarity(gene, bp))
+                path = flatten(genome.buildsimilarity(gene, bp))
+                bpathway.append(path)
         counter = counter + 1
         if(counter % 3 == 0):  # Used because of NCBI's policy on requests without API key. with API key, change to 10  # noqa
             time.sleep(3)
     return bpathway
+
+
+def flatten(path: List) -> List:
+    # TODO: This is just hack, I'll need to work on
+    # the data structure output to remove this extra step
+    """ Flattens the list i.e. removes nested list in output"""
+    return [*chain.from_iterable(x if isinstance(x[0], tuple) else [x] for x in path)]  # noqa
 
 
 if __name__ == '__main__':
