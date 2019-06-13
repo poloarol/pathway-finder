@@ -1,8 +1,7 @@
 """Entry point of program."""
 
 from utils import connector
-from utils import reader
-from utils import writer
+from utils import processor
 
 from typing import List
 from itertools import chain
@@ -11,6 +10,11 @@ from typing import List
 
 import time
 import sys
+
+
+BioConnect = connector.BioConnect
+Writer = processor.Writer
+ReadGB = processor.ReadGB
 
 
 class ReadFile():
@@ -36,7 +40,7 @@ class ReadFile():
     def __init__(self, gbfile):
         """Initialize the reader."""
         self._gb = gbfile
-        self.readGB = reader.ReadGB(self._gb)
+        self.readGB = ReadGB(self._gb)
 
     def getGenome(self):
         """Obtain the genome built from passed gb file."""
@@ -45,38 +49,64 @@ class ReadFile():
 
 @dataclass
 class Finder:
+    """
+    Provides an interface to call all methods necessary to subset a Gb file
+    and search for identical looking pathways as the looked upon one.
+
+    Attributes
+    ..........
+
+    accession (str) : Accession number (identifer) for GB file
+    coreGene (str) : Gene of interest to build pathway around
+    expect (int) = 10 : Expected value of blast output
+    hit (int) = 100 : size of blast output i.e. number of organisms
+    bp (int) = 2500 : number of base pairs to look for around core gene for
+    pathway building
+    similarity (float) = 0.75 : allows to find identical genes to core gene in
+    other genomes
+
+    Methods
+    .......
+
+    finder : Finds identical pathways using the E-Utils and Blast API
+    (appropriate functions in code)
+    flatten (list) : Flattens a list by removing nested list within it
+    repProcedure (list, bp, core gene, similarity) : Parses the blast output
+    and finds idetical genes within it
+    produce (list) : Produces a GB files of identical files from results of
+    finder
+
+    """
 
     accession: str
+    coreGene: str
     expect: int = 10
     hit: int = 100
-    coreGene: str
     bp: int = 2500
     similarity: float = 0.75
-    ReadGB = reader.ReadGB
-    Writer = writer.Writer
-    bconnect = connector.BioConnect(expect, hit)
+    bconnect = BioConnect(expect, hit)
 
     def finder(self) -> List:
         """ Calls other classes to generate a directory of similar pathways as the queried one."""
         gb = self.bconnect.load(self.accession)
-        rb = self.ReadGB(gb)
+        rb = ReadGB(gb)
         genome = rb.readfile()
 
         if not genome:
             sys.exit()
 
-        pathway = genome.build(self.coreGene, self.bp)
-        pathways = self.flatten(pathway)
-        coregene = genome.getCore()
-        output = self.bconnect.bioBlast(coregene)
-        bpathways = self.repProcedure(output, self.bp, coregene, self.similarity)  # noqa
-        bpathways.append(pathways)
+        pathway: List = genome.build(self.coreGene, self.bp)
+        pathway = self.flatten(pathway)
+        coregene: str = genome.getCore()
+        output: List = self.bconnect.bioBlast(coregene)
+        bpathways: List = self.repProcedure(output, self.bp, coregene, self.similarity)  # noqa
+        bpathways.append(pathway)
 
         return bpathways
 
     def produce(self, pathways: List) -> None:
         """Create a gb files of similar pathways compared to queried gene."""
-        writer = self.Writer(pathways)
+        writer = Writer(pathways)
         writer.parse()
         writer.writeGB()
 
@@ -84,9 +114,9 @@ class Finder:
         bpathway: List = list()
         counter: int = 0
         for item in items:
-            bconnect = connector.BioConnect(self.expect, self.hit)
+            bconnect = BioConnect(self.expect, self.hit)
             gbfile = bconnect.load(item)
-            rb = self.ReadGB(gbfile)
+            rb = ReadGB(gbfile)
             genome = rb.readfile()
 
             if not genome:
@@ -96,7 +126,7 @@ class Finder:
             if genes:
                 for gene in genes:
                     genome.setCore(gene)
-                    path = self.flatten(genome.buildsimilarity(gene, bp))
+                    path: List = self.flatten(genome.buildsimilarity(gene, bp))
                     bpathway.append(path)
             counter = counter + 1
             if(counter % 3 == 0):  # Used because of NCBI's policy on requests without API key. with API key, change to 10  # noqa
