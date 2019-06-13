@@ -60,9 +60,8 @@ def main(gbfile, coreGene, bp, similarity):
     bpathways = repProcedure(output, bp, coregene, similarity)
     bpathways.append(pathways)
     writer = Writer(bpathways)
-    records = writer.parse()
-    for record in records:
-        print(record)
+    writer.parse()
+    writer.write()
     # TODO : Add script to call the writter file
     # so as to generate gb file in the output directory
 

@@ -5,32 +5,44 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.Alphabet import IUPAC
 from Bio.SeqFeature import SeqFeature, FeatureLocation
+from Bio import SeqIO
 
 from typing import List
+
+import os
 
 
 class Writer:
     """Provides a methods to write GB files."""
 
     def __init__(self, genes: List):
+        """Initialize variables"""
         self._genes: List = genes
+        self._records: List = list()
 
     def parse(self) -> List:
-        """
-        Using the provided list of subsectioned genes, it provides a
-        list or SeqIO records.
-        """
-        records = list()
+        """Use the provided list of subsectioned genes, it provides a ist or SeqIO records."""
+        record = list()
         for genes in self._genes:
             for gene in genes:
-                records.append(self.produce_records(gene))
+                record.append(self.produce_records(gene))
+            self._records.append(record)
 
-        return records
-
-    def produce_records(self, genes):
-        """Produces a record of a gene in Gb format."""
+    def produce_records(self, gene):
+        """Produce a record of a gene in Gb format."""
         seq = Seq(gene[4], IUPAC.protein)
-        record = SeqRecord(seq, id=gene[3], name=gene[0], description='N/A', annotations=[gene[1], gene[2]])  # noqa
-        loc = SeqFeature(FeatureLocation(gene[5][0], gene[5][1]), type='CDS', strand=gene[6])  # noqa
-        record.features[loc]
+        record = SeqRecord(seq, id=gene.prot_id, name=gene.gene, description='N/A', annotations={'product': gene.product, 'locus_tag': gene.locus})  # noqa
+        loc = SeqFeature(FeatureLocation(gene.loc[0], gene.loc[1]), type='CDS', strand=gene.strand)  # noqa
+        record.features.append(loc)
         return record
+
+    def write(self) -> None:
+        """Write GB files to file system."""
+        for records in self._records:
+            count = 0
+            name = 'expl' + str(count) + '.gb'
+            _dir_ = os.path.join(os.path.expanduser('~'),'/pathway-finder/output', name)
+            with open(_dir_, 'w+') as handle:
+                for record in records:
+                    SeqIO.write(record, handle, 'genbank')
+            count = count + 1

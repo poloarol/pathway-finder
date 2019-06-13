@@ -1,8 +1,9 @@
 /venv
 .vscode
 pathway-finder.code-workspace
-/__pycache__
-/utils/__pycache__
+/__pycache__/
+/utils/__pycache__/
 /pathway_finder.egg-info
 /build/
 /dist/
+/output/

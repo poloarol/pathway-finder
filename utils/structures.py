@@ -1,13 +1,13 @@
 """Definition of the various Data Structures used in the program. """
 from dataclasses import dataclass
 from dataclasses import field
-from typing import Tuple
+from typing import Tuple, NamedTuple
 from typing import NewType
 from typing import Dict
 from typing import List
 from itertools import cycle
 from itertools import islice
-# from collections import namedtuple
+from collections import namedtuple
 
 import Levenshtein
 
@@ -57,9 +57,10 @@ class Gene:
         # f = namedtuple('Info', 'Gene, Locus, Product, Protein')  # noqa
         return (self.gene, self.locus, self.product, self.prot_id)
 
-    def values(self) -> Tuple:
+    def values(self) -> NamedTuple:
         """Obtain all genomic information."""
-        f = (self.gene, self.locus, self.product, self.prot_id, self.trans, self.location, self.strand)  # noqa
+        Gene: NamedTuple = namedtuple('Gene', 'gene locus product prot_id trans loc strand')
+        f = Gene(gene=self.gene, locus=self.locus, product=self.product, prot_id=self.prot_id, trans=self.trans, loc=self.location, strand=self.strand)  # noqa
         return f
 
 
@@ -102,7 +103,7 @@ class Genome:
         """Private method to set Genome core gene."""
         self.core = ident
 
-    def getCore(self) -> Tuple:
+    def getCore(self) -> str:
         """Provides the core genome's core gene"""
         return self.GENOME[self.core][4]
 
