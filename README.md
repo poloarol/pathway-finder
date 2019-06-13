@@ -18,6 +18,3 @@ pip install pathway-finder
 For now all the program only supports request over the E-UTILS web interface of blast. The 
 programs bottleneck is the online blast. With an API key, 10 request can be done before pausing
 the script for 3 seconds, but when lacking it only 3 request can be done.
-
-A local version is under developement which would reduce this bottleneck and therefore increase
-the speed of the program, but will require about 120GB of available space on the workstation.
