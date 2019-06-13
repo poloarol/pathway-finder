@@ -61,7 +61,7 @@ def main(gbfile, coreGene, bp, similarity):
     bpathways.append(pathways)
     writer = Writer(bpathways)
     writer.parse()
-    writer.write()
+    writer.writeGB()
     # TODO : Add script to call the writter file
     # so as to generate gb file in the output directory
 

@@ -10,10 +10,30 @@ from Bio import SeqIO
 from typing import List
 
 import os
+import errno
 
 
 class Writer:
-    """Provides a methods to write GB files."""
+    """
+    Provides a methods to write GB files
+
+    Attributes
+    ..........
+
+    _genes (list) : List of all of all inputed genes
+    _records (list) : Stores all gb records
+
+    Methods
+    .......
+
+    produce_records : Takes a gene info (tuple) and produces
+                      a GB record
+    parse : invokes the produce_records method and produces a list of
+            Gb records
+    write : writes a GB record to the file system
+    writeGB : provided with a list of GB records, invokes write
+
+    """
 
     def __init__(self, genes: List):
         """Initialize variables"""
@@ -36,13 +56,23 @@ class Writer:
         record.features.append(loc)
         return record
 
-    def write(self) -> None:
-        """Write GB files to file system."""
-        for records in self._records:
-            count = 0
+    def writeGB(self) -> None:
+        """Go through records list and write records by calling write method."""
+        count = 0
+        for record in self._records:
             name = 'expl' + str(count) + '.gb'
-            _dir_ = os.path.join(os.path.expanduser('~'),'/pathway-finder/output', name)
-            with open(_dir_, 'w+') as handle:
-                for record in records:
-                    SeqIO.write(record, handle, 'genbank')
-            count = count + 1
+            _dir_ = os.path.join(os.path.expanduser('~'), 'Desktop/output/', name)  # noqa
+            if not os.path.exists(os.path.dirname(_dir_)):
+                try:
+                    print(_dir_)
+                    os.makedirs(os.path.dirname(_dir_))
+                    self.write(_dir_, record)
+                    count = count + 1
+                except OSError as exc:  # Guard against race condition
+                    if exc.errno != errno.EEXIST:
+                        raise('Unable to create file directory')
+
+    def write(self, dir, record):
+        """Write GB files to file system."""
+        with open(dir, 'w+') as handle:
+            SeqIO.write(record, handle, 'genbank')
