@@ -1,7 +1,7 @@
 """Entry point of program."""
 
-from .utils import connector
-from .utils import processor
+from utils import connector
+from utils import processor
 
 from typing import List
 from itertools import chain
