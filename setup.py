@@ -14,8 +14,13 @@ setuptools.setup(
     url="https://github.com/poloarol/pathway-finder",
     packages=setuptools.find_packages(),
     classfiers=[
-        "Programming Language :: Python :: 3",
+        "Intended Audience :: Science/Research",
+        "Intended Audience :: Developers",
+        "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent"
+        "Operating System :: OS Independent",
+        "Topic :: Scientific/Engineering :: Information Analysis",
     ],
 )
