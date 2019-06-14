@@ -1,4 +1,4 @@
-from run import Finder
+from pathway_finder import Finder
 
 
 def main():
