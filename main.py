@@ -1,4 +1,4 @@
-from run import Finder
+from .run import Finder
 
 
 def main():
