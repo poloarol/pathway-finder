@@ -49,6 +49,7 @@ class Gene:
     product: str
     prot_id: str
     trans: str
+    desc: str
     location: Tuple
     strand: int
 
@@ -59,8 +60,8 @@ class Gene:
 
     def values(self) -> NamedTuple:
         """Obtain all genomic information."""
-        Gene: NamedTuple = namedtuple('Gene', 'gene locus product prot_id trans loc strand')
-        f = Gene(gene=self.gene, locus=self.locus, product=self.product, prot_id=self.prot_id, trans=self.trans, loc=self.location, strand=self.strand)  # noqa
+        Gene: NamedTuple = namedtuple('Gene', 'gene locus product prot_id trans desc loc strand')  # noqa
+        f = Gene(gene=self.gene, locus=self.locus, product=self.product, prot_id=self.prot_id, trans=self.trans, desc=self.desc,loc=self.location, strand=self.strand)  # noqa
         return f
 
 
@@ -114,7 +115,7 @@ class Genome:
         if genes:
             right: List = self.rbuild(genes[0], len(genes), bp)
             left: List = self.lbuild(genes[0], len(genes), bp)
-            right.append(left)
+            right.extend(left)
             return right
         return genes
 
@@ -131,7 +132,7 @@ class Genome:
         if isinstance(indices, list):
             for i in indices:
                 start = islice(kcycle, indices, None)
-                right.append(self.paths(start, bp))
+                right.extend(self.paths(start, bp))
         else:
             start = islice(kcycle, indices, None)
             right = self.paths(start, bp)
@@ -148,9 +149,11 @@ class Genome:
         if isinstance(indices, list):
             for i in indices:
                 start = islice(kcycle, indices, None)
-                left.append(self.paths(start, bp))
+                next(start)
+                left.extend(self.paths(start, bp))
         else:
             start = islice(kcycle, indices, None)
+            next(start)
             left = self.paths(start, bp)
         return left
 
@@ -158,7 +161,7 @@ class Genome:
         """After setting core gene by similarity, use this to build pathway."""
         right: List = self.rbuild(value, 1, bp)
         left: List = self.lbuild(value, 1, bp)
-        right.append(left)
+        right.extend(left)
         return right
 
     def paths(self, start, bp) -> List:
@@ -166,10 +169,10 @@ class Genome:
         path = list()
         length = 0
 
-        while length < bp:
+        while length <= bp:
             gene: GENE = next(start)
             info: Tuple = self.GENOME[gene]
-            size: int = int(info[5][1]) - int(info[5][0])  # calculate the size of the gene  # noqa
+            size: int = int(info.loc[1]) - int(info.loc[0])  # calculate the size of the gene  # noqa
             length = length + size
             path.append(info)
 

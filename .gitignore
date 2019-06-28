@@ -1,6 +1,8 @@
 /venv
 .vscode
 /pathway_finder/utils/__pycache__/
+/pathway_finder/__pycache__/
 /dist
 /build
 *.egg-info
+*.code-workspace

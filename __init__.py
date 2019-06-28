@@ -1,1 +1,1 @@
-name = 'pathway-finder'
+name = 'pathway_finder'

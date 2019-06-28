@@ -1,7 +1,7 @@
 """Read and Write GB files."""
 
 from .structures import Genome
-# from .structures import Organism
+from .structures import Organism
 from .structures import Gene
 from .structures import GENE
 
@@ -53,7 +53,7 @@ class ReadGB:
             self.flag = True
         self.GENOME = Genome()
         try:
-            # self._org = Organism(self._record.annotations['organism'], self._record.annotations['accessions'][0])  # noqa
+            self._org = Organism(self._record.annotations['organism'], self._record.annotations['accessions'][0])  # noqa
             pass
         except KeyError:
             raise KeyError('Organim and Accession keys are nor present.')
@@ -71,6 +71,7 @@ class ReadGB:
                 product: str = 'n/a'
                 gene: str = 'n/a'
                 translation: str = 'n/a'
+                description: str = 'n/a'
                 for i, recs in enumerate(self._record.features):
                     if recs.type == 'CDS':
                         if 'translation' in recs.qualifiers:
@@ -83,9 +84,11 @@ class ReadGB:
                             product = recs.qualifiers['product'][0]
                         if 'protein_id' in recs.qualifiers:
                             prot_id = recs.qualifiers['protein_id'][0]
+                        if 'description' in recs.qualifiers:
+                            description = recs.qualifiers['description'][0]
                         strand: int = int(recs.strand)
                         location: Tuple = (recs.location.start.position, recs.location.end.position)  # noqa
-                        g: GENE = Gene(gene, locus, product, prot_id, translation, location, strand)  # noqa
+                        g: GENE = Gene(gene, locus, product, prot_id, translation, description, location, strand)  # noqa
                         self.GENOME.addGene(g)
             except KeyError:
                 raise KeyError('CDS key not found.')
@@ -120,35 +123,40 @@ class Writer:
         self._records: List = list()
 
     def parse(self) -> List:
-        """Use the provided list of subsectioned genes, it provides a ist or SeqIO records."""
-        record = list()
+        """Use the provided list of subsectioned genes, it provides a ist or SeqIO records."""  # noqa
         for genes in self._genes:
+            record = list()
             for gene in genes:
-                record.append(self.produce_records(gene))
+                value = self.produce_records(gene)
+                record.append(value)
             self._records.append(record)
 
-    def produce_records(self, gene):
+    def produce_records(self, genes):
         """Produce a record of a gene in Gb format."""
-        seq = Seq(gene[4], IUPAC.protein)
-        record = SeqRecord(seq, id=gene.prot_id, name=gene.gene, description='N/A', annotations={'product': gene.product, 'locus_tag': gene.locus})  # noqa
-        loc = SeqFeature(FeatureLocation(gene.loc[0], gene.loc[1]), type='CDS', strand=gene.strand)  # noqa
+        seq = Seq(genes.trans, IUPAC.protein)
+        record = SeqRecord(seq, id=genes.prot_id, name=genes.gene, description=genes.desc, annotations={'product': genes.product, 'locus_tag': genes.locus})  # noqa
+        loc = SeqFeature(FeatureLocation(genes.loc[0], genes.loc[1]), type='CDS', strand=genes.strand)  # noqa
         record.features.append(loc)
         return record
 
     def writeGB(self) -> None:
-        """Go through records list and write records by calling write method."""
-        count = 0
-        for record in self._records:
-            name = 'expl' + str(count) + '.gb'
-            _dir_ = os.path.join(os.path.expanduser('~'), 'Desktop/output/', name)  # noqa
-            if not os.path.exists(os.path.dirname(_dir_)):
-                try:
-                    os.makedirs(os.path.dirname(_dir_))
-                except OSError as exc:  # Guard against race condition
-                    if exc.errno != errno.EEXIST:
-                        raise
-            self.write(_dir_, record)
-            count = count + 1
+        """Go through records list and write records by calling write method."""  # noqa
+        for records in self._records:
+            print("===================================================")
+            print(records)
+            print("===================================================")
+        # count = 0
+        # for record in self._records:
+        #     name = 'expl' + str(count) + '.gb'
+        #     _dir_ = os.path.join(os.path.expanduser('~'), 'Desktop/output/', name)  # noqa
+        #     if not os.path.exists(os.path.dirname(_dir_)):
+        #         try:
+        #             os.makedirs(os.path.dirname(_dir_))
+        #         except OSError as exc:  # Guard against race condition
+        #             if exc.errno != errno.EEXIST:
+        #                 raise
+        #     self.write(_dir_, record)
+        #     count = count + 1
 
     def write(self, dir, record):
         """Write GB files to file system."""

@@ -6,7 +6,6 @@ from .utils import processor
 from typing import List
 from itertools import chain
 from dataclasses import dataclass
-from typing import List
 
 import time
 import sys
@@ -80,17 +79,18 @@ class Finder:
 
     accession: str
     coreGene: str
-    expect: int = 10
     hit: int = 100
+    expect: int = 10
     bp: int = 2500
-    similarity: float = 0.75
+    similarity: float = 0.5
     bconnect = BioConnect(expect, hit)
 
     def finder(self) -> List:
-        """ Calls other classes to generate a directory of similar pathways as the queried one."""
+        """ Calls other classes to generate a directory of similar pathways as the queried one."""  # noqa
         gb = self.bconnect.load(self.accession)
         rb = ReadGB(gb)
         genome = rb.readfile()
+        # organism = rb.provideOrg()
 
         if not genome:
             sys.exit()
@@ -99,10 +99,10 @@ class Finder:
         pathway = self.flatten(pathway)
         coregene: str = genome.getCore()
         output: List = self.bconnect.bioBlast(coregene)
-        bpathways: List = self.repProcedure(output, self.bp, coregene, self.similarity)  # noqa
-        bpathways.append(pathway)
+        pathways: List = self.repProcedure(output, self.bp, coregene, self.similarity)  # noqa
+        pathways.append(pathway)
 
-        return bpathways
+        return pathways
 
     def produce(self, pathways: List) -> None:
         """Create a gb files of similar pathways compared to queried gene."""
@@ -111,13 +111,14 @@ class Finder:
         writer.writeGB()
 
     def repProcedure(self, items: List, bp: int, coreGene: str, similarity: float) -> List:  # noqa
-        bpathway: List = list()
+        pathway: List = list()
         counter: int = 0
         for item in items:
             bconnect = BioConnect(self.expect, self.hit)
             gbfile = bconnect.load(item)
             rb = ReadGB(gbfile)
             genome = rb.readfile()
+            # organism = rb.provideOrg()
 
             if not genome:
                 sys.exit()
@@ -127,11 +128,11 @@ class Finder:
                 for gene in genes:
                     genome.setCore(gene)
                     path: List = self.flatten(genome.buildsimilarity(gene, bp))
-                    bpathway.append(path)
+                    pathway.append(path)
             counter = counter + 1
             if(counter % 3 == 0):  # Used because of NCBI's policy on requests without API key. with API key, change to 10  # noqa
                 time.sleep(3)
-        return bpathway
+        return pathway
 
     def flatten(self, path: List) -> List:
         # TODO: This is just hack, I'll need to work on
@@ -140,7 +141,7 @@ class Finder:
         return [*chain.from_iterable(x if isinstance(x[0], tuple) else [x] for x in path)]  # noqa
 
 
-# finder = Finder(accession='CP013839.1', hit=10, expect=100, coreGene="MGAS23530_0009", bp=5000, similarity=0.75)
+# finder = Finder(accession='CP013839.1', hit=10, expect=100, coreGene="MGAS23530_0009", bp=5000, similarity=0.75)  # noqa
 # finder = Finder(accession='CP013839.1', coreGene="MGAS23530_0009")
 
 # find small genome and build unittest based on that

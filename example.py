@@ -2,7 +2,7 @@ from pathway_finder import Finder
 
 
 def main():
-    finder = Finder(accession='AL123456.3', coreGene="Rv0032")
+    finder = Finder(accession='NC_000915.1', coreGene="NP_206977.1", hit=5)
     pathways = finder.finder()
     finder.produce(pathways)
 
