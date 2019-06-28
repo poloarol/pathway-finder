@@ -141,22 +141,18 @@ class Writer:
 
     def writeGB(self) -> None:
         """Go through records list and write records by calling write method."""  # noqa
-        for records in self._records:
-            print("===================================================")
-            print(records)
-            print("===================================================")
-        # count = 0
-        # for record in self._records:
-        #     name = 'expl' + str(count) + '.gb'
-        #     _dir_ = os.path.join(os.path.expanduser('~'), 'Desktop/output/', name)  # noqa
-        #     if not os.path.exists(os.path.dirname(_dir_)):
-        #         try:
-        #             os.makedirs(os.path.dirname(_dir_))
-        #         except OSError as exc:  # Guard against race condition
-        #             if exc.errno != errno.EEXIST:
-        #                 raise
-        #     self.write(_dir_, record)
-        #     count = count + 1
+        count = 0
+        for record in self._records:
+            name = 'expl' + str(count) + '.gb'
+            _dir_ = os.path.join(os.path.expanduser('~'), 'Desktop/output/', name)  # noqa
+            if not os.path.exists(os.path.dirname(_dir_)):
+                try:
+                    os.makedirs(os.path.dirname(_dir_))
+                except OSError as exc:  # Guard against race condition
+                    if exc.errno != errno.EEXIST:
+                        raise
+            self.write(_dir_, record)
+            count = count + 1
 
     def write(self, dir, record):
         """Write GB files to file system."""
