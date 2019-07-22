@@ -77,8 +77,9 @@ class Finder:
 
     """
 
-    accession: str
-    coreGene: str
+    accession: str = None
+    coreGene: str = None
+    seq: str = None
     hit: int = 100
     expect: int = 10
     bp: int = 2500
@@ -102,6 +103,18 @@ class Finder:
         pathways: List = self.repProcedure(output, self.bp, coregene, self.similarity)  # noqa
         pathways.append(pathway)
 
+        return pathways
+
+    def auxFinder(self):
+        """obtains protein sequence from genbank and performs blast and other related task as finder()"""
+        gb = self.bconnect.load(self.accession)
+        output = self.bconnect.bioBlast(gb)
+        pathways = self.repProcedure(output, self.bp, gb, self.similarity)
+        return pathways
+
+    def seqFinder(self):
+        output = self.bconnect.bioBlast(self.seq)
+        pathways = self.repProcedure(output, self.bp, self.output, self.similarity)
         return pathways
 
     def produce(self, pathways: List) -> None:
@@ -143,6 +156,8 @@ class Finder:
 
 # finder = Finder(accession='CP013839.1', hit=10, expect=100, coreGene="MGAS23530_0009", bp=5000, similarity=0.75)  # noqa
 # finder = Finder(accession='CP013839.1', coreGene="MGAS23530_0009")
+# using protein accession number finder = Finder(coreGene="AAD07482.1")
+# using a sequence finder = Finder(seq="AUGTTTYRRSTVVVVALLISSTUCCYTADQ")
 
 # find small genome and build unittest based on that
 # Mycoplasma genitalium

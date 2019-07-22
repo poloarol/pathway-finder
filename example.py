@@ -6,6 +6,14 @@ def main():
     pathways = finder.finder()
     finder.produce(pathways)
 
+    finder = Finder(accession="AAD07482.1")
+    pathways = finder.auxFinder()
+    finder.produce(pathways)
+
+    finder = Finder(seq="AUGTTTYRRSTVVVVALLISSTUCCYTADQ")
+    pathways = finder.seqFinder()
+    finder.produce(pathways)
+
 
 if __name__ == '__main__':
     main()
