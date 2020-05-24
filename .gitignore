@@ -1,4 +1,4 @@
-/venv
+/pathway_finder/env
 .vscode
 /pathway_finder/utils/__pycache__/
 /pathway_finder/__pycache__/
@@ -6,3 +6,4 @@
 /build
 *.egg-info
 *.code-workspace
+../client/node_modules

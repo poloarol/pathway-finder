@@ -1,7 +1,7 @@
 """Entry point of program."""
 
-from .utils import connector
-from .utils import processor
+from utils import connector
+from utils import processor
 
 from typing import List
 from itertools import chain
@@ -77,21 +77,23 @@ class Finder:
 
     """
 
+    email: str
     accession: str = None
     coreGene: str = None
     seq: str = None
-    hit: int = 100
-    expect: int = 10
     bp: int = 2500
     similarity: float = 0.5
-    bconnect = BioConnect(expect, hit)
+    bconnect = None
 
-    def finder(self) -> List:
+    def __post_init__(self):
+        self.bconnect = BioConnect(self.email)
+
+    def finder(self):
         """ Calls other classes to generate a directory of similar pathways as the queried one."""  # noqa
         gb = self.bconnect.load(self.accession)
         rb = ReadGB(gb)
         genome = rb.readfile()
-        # organism = rb.provideOrg()
+        organism = rb.provideOrg()
 
         if not genome:
             sys.exit()
@@ -105,57 +107,66 @@ class Finder:
 
         return pathways
 
-    def auxFinder(self):
-        """obtains protein sequence from genbank and performs blast and other related task as finder()"""
-        gb = self.bconnect.load(self.accession)
-        output = self.bconnect.bioBlast(gb)
-        pathways = self.repProcedure(output, self.bp, gb, self.similarity)
-        return pathways
+    # def auxFinder(self):
+    #     """obtains protein sequence from genbank and performs blast and other related task as finder()"""
+    #     gb = self.bconnect.load(self.accession)
+    #     output = self.bconnect.bioBlast(gb)
+    #     pathways = self.repProcedure(output, self.bp, gb, self.similarity)
+    #     return pathways
+    #
+    # def seqFinder(self):
+    #     output = self.bconnect.bioBlast(self.seq)
+    #     pathways = self.repProcedure(output, self.bp, self.output, self.similarity)
+    #     return pathways
+    #
+    # def write_fasta(self, pathways: List) -> None:
+    #     """Create a gb files of similar pathways compared to queried gene."""
+    #     writer = Writer(pathways)
+    #     writer.parse()
+    #     # writer.writeGB()
 
-    def seqFinder(self):
-        output = self.bconnect.bioBlast(self.seq)
-        pathways = self.repProcedure(output, self.bp, self.output, self.similarity)
-        return pathways
-
-    def produce(self, pathways: List) -> None:
-        """Create a gb files of similar pathways compared to queried gene."""
-        writer = Writer(pathways)
-        writer.parse()
-        writer.writeGB()
-
-    def repProcedure(self, items: List, bp: int, coreGene: str, similarity: float) -> List:  # noqa
+    def repProcedure(self, items: List, bp: int, coreGene: str, similarity: float):  # noqa
         pathway: List = list()
         counter: int = 0
         for item in items:
-            bconnect = BioConnect(self.expect, self.hit)
-            gbfile = bconnect.load(item)
-            rb = ReadGB(gbfile)
-            genome = rb.readfile()
-            # organism = rb.provideOrg()
+            time.sleep(1)
+            try:
+                gbfile = self.bconnect.load(item)
+                rb = ReadGB(gbfile)
+                genome = rb.readfile()
+                organism = rb.provideOrg()
 
-            if not genome:
-                sys.exit()
-
-            genes: List = genome.findCoreGeneBySimilarity(coreGene, similarity)
-            if genes:
-                for gene in genes:
-                    genome.setCore(gene)
-                    path: List = self.flatten(genome.buildsimilarity(gene, bp))
-                    pathway.append(path)
-            counter = counter + 1
-            if(counter % 3 == 0):  # Used because of NCBI's policy on requests without API key. with API key, change to 10  # noqa
-                time.sleep(3)
+                if not genome:
+                    sys.exit()
+                
+                genes: List = genome.findCoreGeneBySimilarity(coreGene, similarity)
+                if genes:
+                    for gene in genes:
+                        genome.setCore(gene)
+                        path: List = self.flatten(genome.buildsimilarity(gene, bp))
+                        pathway.append(path)
+                counter = counter + 1
+                if(counter % 3 == 0):  # Used because of NCBI's policy on requests without API key. with API key, change to 10  # noqa
+                    time.sleep(3)
+            except:
+                print("failed to download {0}".format(item))
         return pathway
 
-    def flatten(self, path: List) -> List:
+    def flatten(self, path: List):
         # TODO: This is just hack, I'll need to work on
         # the data structure output to remove this extra step
         """ Flattens the list i.e. removes nested list in output"""
         return [*chain.from_iterable(x if isinstance(x[0], tuple) else [x] for x in path)]  # noqa
 
+email: str = 'adjon081@uottawa.ca'
 
-# finder = Finder(accession='CP013839.1', hit=10, expect=100, coreGene="MGAS23530_0009", bp=5000, similarity=0.75)  # noqa
+finder = Finder(email, accession="KK037233.1", coreGene="EWM62968.1", bp=5000, similarity=0.75)  # noqa
+paths = finder.finder()
+# finder.write_fasta(paths)
+
 # finder = Finder(accession='CP013839.1', coreGene="MGAS23530_0009")
+# paths = finder.finder()
+# paths.produce()
 # using protein accession number finder = Finder(coreGene="AAD07482.1")
 # using a sequence finder = Finder(seq="AUGTTTYRRSTVVVVALLISSTUCCYTADQ")
 

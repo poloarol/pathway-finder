@@ -9,8 +9,8 @@ from typing import List
 
 import urllib
 import ssl
+import re
 
-Entrez.email = 'adjon081@uottawa.ca'
 ssl._create_default_https_context = ssl._create_unverified_context
 
 
@@ -46,30 +46,33 @@ class BioConnect:
 
     """
 
-    expect: int
-    hit: int
+    email: str
     db = 'nucleotide'
     fileFormat = 'XML'
     flavour = 'tblastn'
-    service = 'psi'
+    # service = 'psi'
     blastdb = 'nr'
+
+    def __post_init__(self):
+        Entrez.email = 'adjon081@uottawa.ca'
 
     def load(self, accession):
         """Download Genbank record from NCBI-Genbank."""
         try:
-            handle = Entrez.efetch(db=self.db, id=accession, rettype="gbwithparts", retmode='txt')  # noqa
+            handle = Entrez.efetch(db=self.db, id=accession, rettype="gbwithparts", retmode='text')  # noqa
             return handle
         except urllib.error.HTTPError as error:
             print(error.read())
 
-    def bioBlast(self, seq) -> List:
+    def bioBlast(self, seq):
         """Run blast on the NCBI servers."""
-        handle = NCBIWWW.qblast(self.flavour, self.blastdb, seq, format_type=self.fileFormat, hitlist_size=self.hit, expect=self.expect, service=self.service)  # noqa
+        handle = NCBIWWW.qblast(self.flavour, self.blastdb, seq, format_type=self.fileFormat)
         record = NCBIXML.parse(handle)
         numList = list()
 
         for rec in record:
             for align in rec.alignments:
-                numList.append(align.accession)
+                accession: str = align.strip('\n\n', '')
+                numList.append(accession)
 
         return numList

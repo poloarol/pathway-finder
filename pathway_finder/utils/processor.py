@@ -18,6 +18,7 @@ from typing import Tuple
 
 import os
 import errno
+import textwrap
 
 
 class ReadGB:
@@ -46,7 +47,9 @@ class ReadGB:
 
     def __init__(self, genbank):
         """Initialize the reader and store gb."""
+
         self.flag = False
+
         try:
             self._record = SeqIO.read(genbank, 'genbank')
         except Exception:
@@ -54,15 +57,14 @@ class ReadGB:
         self.GENOME = Genome()
         try:
             self._org = Organism(self._record.annotations['organism'], self._record.annotations['accessions'][0])  # noqa
-            pass
         except KeyError:
             raise KeyError('Organim and Accession keys are nor present.')
 
-    def provideOrg(self) -> Tuple:
+    def provideOrg(self):
         """Provide indentifier about organism created."""
         return self._org.info()
 
-    def readfile(self) -> Dict:
+    def readfile(self):
         """Read the gb file and return a new Genome."""
         if not self.flag:
             try:
@@ -120,41 +122,16 @@ class Writer:
     def __init__(self, genes: List):
         """Initialize variables"""
         self._genes: List = genes
-        self._records: List = list()
 
-    def parse(self) -> List:
+    def parse(self):
         """Use the provided list of subsectioned genes, it provides a ist or SeqIO records."""  # noqa
+        sequences: str = ""
         for genes in self._genes:
             record = list()
             for gene in genes:
-                value = self.produce_records(gene)
-                record.append(value)
-            self._records.append(record)
-
-    def produce_records(self, genes):
-        """Produce a record of a gene in Gb format."""
-        seq = Seq(genes.trans, IUPAC.protein)
-        record = SeqRecord(seq, id=genes.prot_id, name=genes.gene, description=genes.desc, annotations={'product': genes.product, 'locus_tag': genes.locus})  # noqa
-        loc = SeqFeature(FeatureLocation(genes.loc[0], genes.loc[1]), type='CDS', strand=genes.strand)  # noqa
-        record.features.append(loc)
-        return record
-
-    def writeGB(self) -> None:
-        """Go through records list and write records by calling write method."""  # noqa
-        count = 0
-        for record in self._records:
-            name = 'expl' + str(count) + '.gb'
-            _dir_ = os.path.join(os.path.expanduser('~'), 'Desktop/output/', name)  # noqa
-            if not os.path.exists(os.path.dirname(_dir_)):
-                try:
-                    os.makedirs(os.path.dirname(_dir_))
-                except OSError as exc:  # Guard against race condition
-                    if exc.errno != errno.EEXIST:
-                        raise
-            self.write(_dir_, record)
-            count = count + 1
-
-    def write(self, dir, record):
-        """Write GB files to file system."""
-        with open(dir, 'w+') as handle:
-            SeqIO.write(record, handle, 'genbank')
+                translation = '\n'.join(textwrap.wrap(gene.trans, 60))
+                line: str = "{0} - {1}\n{2}".format(gene.prot_id, gene.protein, translation)
+                print(line)
+            #     value = self.produce_records(gene)
+            #     record.append(value)
+            # self._records.append(record)

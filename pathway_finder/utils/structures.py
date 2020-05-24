@@ -124,7 +124,7 @@ class Genome:
         right: List = list()
         keys: List = list(self.GENOME)
         indices = keys.index(value) if size == 1 else [i for i, x in enumerate(keys) if x == value]  # noqa
-        # TODO: To speed it up, NumPy can be used 
+        # TODO: To speed it up, NumPy can be used
         # (https://stackoverflow.com/questions/6294179/how-to-find-all-occurrences-of-an-element-in-a-list)
         # as explained
         kcycle = cycle(keys)  # itertool.cycle, to cycle over the list until desired length or queried gene is met again.  # noqa
