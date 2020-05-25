@@ -1,9 +1,7 @@
 <template>
   <div>
     <NavBar></NavBar>
-    <div>
-      <p>{{ msg }}</p>
-    </div>
+    <Form></Form>
     <Footer></Footer>
   </div>
 </template>
@@ -13,12 +11,14 @@
 import axios from 'axios';
 import NavBar from '../components/NavBarComponent';
 import Footer from '../components/FooterComponent';
+import Form from '../components/FormComponent';
 
 export default {
   name: 'Ping',
   components: {
     NavBar,
-    Footer
+    Footer,
+    Form
   },
   data(){
     return {
