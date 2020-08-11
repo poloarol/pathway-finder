@@ -27,15 +27,15 @@ export default {
   },
   getNavLinks() {
     return [{
-      icon: 'diamond',
+      icon: 'github',
       link: 'https://github.com/poloarol/pathway-finder',
     },
     {
-      icon: 'cup',
+      icon: 'diamond',
       link: 'http://www.boddylab.ca/',
     },
     {
-      icon: 'display',
+      icon: 'diamond',
       link: 'https://twitter.com/boddylab?lang=en',
     },
     ];

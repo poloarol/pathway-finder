@@ -80,7 +80,6 @@ class Finder:
     email: str
     accession: str = None
     coreGene: str = None
-    seq: str = None
     bp: int = 2500
     similarity: float = 0.5
     bconnect = None
@@ -129,7 +128,6 @@ class Finder:
         pathway: List = list()
         counter: int = 0
         for item in items:
-            time.sleep(1)
             try:
                 gbfile = self.bconnect.load(item)
                 rb = ReadGB(gbfile)
@@ -158,10 +156,12 @@ class Finder:
         """ Flattens the list i.e. removes nested list in output"""
         return [*chain.from_iterable(x if isinstance(x[0], tuple) else [x] for x in path)]  # noqa
 
-email: str = 'adjon081@uottawa.ca'
+# email: str = 'adjon081@uottawa.ca'
 
-finder = Finder(email, accession="KK037233.1", coreGene="EWM62968.1", bp=5000, similarity=0.75)  # noqa
-paths = finder.finder()
+# finder = Finder(email, accession="KK037233.1", coreGene="EWM62968.1", bp=5000, similarity=0.75)  # noqa
+# paths = finder.finder()
+# for path in paths:
+#     print(path)
 # finder.write_fasta(paths)
 
 # finder = Finder(accession='CP013839.1', coreGene="MGAS23530_0009")

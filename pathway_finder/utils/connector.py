@@ -72,7 +72,7 @@ class BioConnect:
 
         for rec in record:
             for align in rec.alignments:
-                accession: str = align.strip('\n\n', '')
+                accession = align.accession.strip('\n\n')
                 numList.append(accession)
 
         return numList
