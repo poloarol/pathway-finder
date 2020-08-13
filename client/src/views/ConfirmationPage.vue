@@ -1,5 +1,5 @@
 <template>
-  <ConfirmationMessage msg='' job='' />
+  <ConfirmationMessage :job=uuid />
 </template>
 
 <style>
@@ -12,8 +12,14 @@ import ConfirmationMessage from '@/components/ConfirmationMessage.vue';
 
 export default {
   name: 'Confirmation',
+  props: ['job'],
   components: {
     ConfirmationMessage,
+  },
+  data() {
+    return {
+      uuid: this.job,
+    };
   },
 };
 </script>

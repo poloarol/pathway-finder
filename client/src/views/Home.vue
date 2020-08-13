@@ -1,8 +1,8 @@
 <template>
-  <b-container fluid>
-      <NavBar/>
-      <Footer/>
-  </b-container>
+  <div>
+    <NavBar></NavBar>
+    <Footer></Footer>
+  </div>
 </template>
 
 <script>

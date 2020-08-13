@@ -13,7 +13,8 @@
             <b-row col-8>
                 <b-container fluid class="thank-you">
                     <h5>Thanks for using PathwayFinder</h5>
-                    <p>Your Job can be retrieved using ...</p>
+                    <br>
+                    <h5>Your Job can be retrieved using <b><em> {{ key }} </em></b></h5>
                 </b-container>
             </b-row>
         </b-container>
@@ -37,3 +38,15 @@
     }
 
 </style>
+
+<script>
+export default {
+  name: 'ConfirmationMessage',
+  props: ['job'],
+  data() {
+    return {
+      key: this.job,
+    };
+  },
+};
+</script>

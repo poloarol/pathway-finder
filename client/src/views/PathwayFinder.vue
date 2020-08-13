@@ -2,8 +2,8 @@
   <div>
     <NavBar></NavBar>
     <div>
-      <Form class="show-on-submit" id="form-submit" @gotoggle='toggle'></Form>
-      <Confirmation msg="" job="" class="hide-on-submit" id="message-submit"></Confirmation>
+      <Form id="form-submit" v-if="!uuid" @gotoggle='toggle'></Form>
+      <Confirmation :job=uuid v-if="uuid" id="message-submit"></Confirmation>
     </div>
     <Footer></Footer>
   </div>
@@ -44,7 +44,7 @@ export default {
   },
   data() {
     return {
-      msg: '',
+      uuid: '',
     };
   },
   methods: {
@@ -58,13 +58,14 @@ export default {
           this.msg = error;
         });
     },
-    toggle() {
-      const form = document.getElementById('form-submit');
-      const msg = document.getElementById('message-submit');
-      form.classList.remove('show-on-submit');
-      form.classList.add('hide-on-submit');
-      msg.classList.remove('hide-on-submit');
-      msg.classList.add('show-on-submit');
+    toggle(value) {
+      // const form = document.getElementById('form-submit');
+      // const msg = document.getElementById('message-submit');
+      // form.classList.remove('show-on-submit');
+      // form.classList.add('hide-on-submit');
+      // msg.classList.remove('hide-on-submit');
+      // msg.classList.add('show-on-submit');
+      this.uuid = value;
     },
   },
   created() {

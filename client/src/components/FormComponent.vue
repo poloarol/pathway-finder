@@ -125,6 +125,7 @@
 <script>
 
 import axios from 'axios';
+import { v4 as uuid4 } from 'uuid';
 
 export default {
   name: 'FormComponent',
@@ -191,17 +192,17 @@ export default {
     doSomething() {
       return false;
     },
-    msg_form_toggler() {
-      this.$emit('gotoggle');
+    msg_form_toggler(key) {
+      this.$emit('gotoggle', key);
     },
     onSubmit() {
       const path = 'http://localhost:5000';
-      this.msg_form_toggler();
-      axios.post(path, JSON.stringify(this.form))
+      this.form.uuid4 = uuid4();
+      this.msg_form_toggler(this.form.uuid4);
+      axios.post(`${path}/pathway`, JSON.stringify(this.form))
         .then((res) => {
           if (res.status === 200) {
-            const info = res.data;
-            this.$router.push({ path: '/submission', params: info });
+            this.$router.push({ path: '/submission', key: this.form.uuid4 });
           }
         });
     },
