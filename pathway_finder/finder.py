@@ -98,25 +98,14 @@ class Finder:
             sys.exit()
 
         pathway: List = genome.build(self.coreGene, self.bp)
-        pathway = self.flatten(pathway)
         coregene: str = genome.getCore()
-        output: List = self.bconnect.bioBlast(coregene)
+        output: List = self.bconnect.bioBlast(self.coreGene)
         pathways: List = self.repProcedure(output, self.bp, coregene, self.similarity)  # noqa
-        pathways.append(pathway)
+        # pathways.append(pathway)
 
-        return pathways
+        # return pathways
 
-    # def auxFinder(self):
-    #     """obtains protein sequence from genbank and performs blast and other related task as finder()"""
-    #     gb = self.bconnect.load(self.accession)
-    #     output = self.bconnect.bioBlast(gb)
-    #     pathways = self.repProcedure(output, self.bp, gb, self.similarity)
-    #     return pathways
-    #
-    # def seqFinder(self):
-    #     output = self.bconnect.bioBlast(self.seq)
-    #     pathways = self.repProcedure(output, self.bp, self.output, self.similarity)
-    #     return pathways
+        print(pathway)
     #
     # def write_fasta(self, pathways: List) -> None:
     #     """Create a gb files of similar pathways compared to queried gene."""
@@ -142,7 +131,8 @@ class Finder:
                     for gene in genes:
                         genome.setCore(gene)
                         path: List = self.flatten(genome.buildsimilarity(gene, bp))
-                        pathway.append(path)
+                        print(path)
+                        # pathway.append(path)
                 counter = counter + 1
                 if(counter % 3 == 0):  # Used because of NCBI's policy on requests without API key. with API key, change to 10  # noqa
                     time.sleep(3)
@@ -156,10 +146,10 @@ class Finder:
         """ Flattens the list i.e. removes nested list in output"""
         return [*chain.from_iterable(x if isinstance(x[0], tuple) else [x] for x in path)]  # noqa
 
-# email: str = 'adjon081@uottawa.ca'
+email: str = 'adjon081@uottawa.ca'
 
-# finder = Finder(email, accession="KK037233.1", coreGene="EWM62968.1", bp=5000, similarity=0.75)  # noqa
-# paths = finder.finder()
+finder = Finder(email, accession="KK037233.1", coreGene="EWM62968.1", bp=10000, similarity=0.75)  # noqa
+paths = finder.finder()
 # for path in paths:
 #     print(path)
 # finder.write_fasta(paths)

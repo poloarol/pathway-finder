@@ -18,7 +18,7 @@ const router = new VueRouter({
     name: 'Home',
     component: Home,
   }, {
-    path: '/submission',
+    path: '/submission/:id',
     name: 'Visualization',
     component: Visualization,
   }],

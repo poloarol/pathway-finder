@@ -202,7 +202,7 @@ export default {
       axios.post(`${path}/pathway`, JSON.stringify(this.form))
         .then((res) => {
           if (res.status === 200) {
-            this.$router.push({ path: '/submission', key: this.form.uuid4 });
+            this.$router.push({ path: `/submission/${this.form.uuid4}`, params: { value: this.form.uuid4 } });
           }
         });
     },

@@ -68,12 +68,12 @@ class ReadGB:
         """Read the gb file and return a new Genome."""
         if not self.flag:
             try:
-                prot_id: str = 'n/a'
-                locus: str = 'n/a'
-                product: str = 'n/a'
-                gene: str = 'n/a'
-                translation: str = 'n/a'
-                description: str = 'n/a'
+                prot_id: str = 'N/A'
+                locus: str = 'N/A'
+                product: str = 'N/A'
+                gene: str = 'N/A'
+                translation: str = 'N/A'
+                description: str = 'N/A'
                 for i, recs in enumerate(self._record.features):
                     if recs.type == 'CDS':
                         if 'translation' in recs.qualifiers:

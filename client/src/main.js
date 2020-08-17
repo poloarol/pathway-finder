@@ -5,6 +5,7 @@ import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 // import { far } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import VueCarousel from 'vue-owl-carousel';
 
 
 import 'bootstrap/dist/css/bootstrap.css';
@@ -23,6 +24,7 @@ Vue.use(BootstrapVueIcons);
 Vue.use(IconsPlugin);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.component('vue-carousel', VueCarousel);
 
 Vue.config.productionTip = false;
 

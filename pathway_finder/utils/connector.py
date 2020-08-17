@@ -70,9 +70,13 @@ class BioConnect:
         record = NCBIXML.parse(handle)
         numList = list()
 
+        print('------ started blast ------')
+
         for rec in record:
             for align in rec.alignments:
                 accession = align.accession.strip('\n\n')
                 numList.append(accession)
+        
+        print('------ Ended blast ------')
 
         return numList
