@@ -44,6 +44,7 @@ class Organism:
 class Gene:
     """Allow to capture the identifiers of a gene."""
 
+    org: Tuple
     gene: str
     locus: str
     product: str
@@ -52,16 +53,17 @@ class Gene:
     desc: str
     location: Tuple
     strand: int
+    dna: str
 
     def keys(self):
         """Obtain all keys."""
         # f = namedtuple('Info', 'Gene, Locus, Product, Protein')  # noqa
-        return (self.gene, self.locus, self.product, self.prot_id)
+        return (self.org, self.gene, self.locus, self.product, self.prot_id, self.dna)
 
     def values(self):
         """Obtain all genomic information."""
-        Gene: NamedTuple = namedtuple('Gene', 'gene locus product prot_id trans desc loc strand')  # noqa
-        f = Gene(gene=self.gene, locus=self.locus, product=self.product, prot_id=self.prot_id, trans=self.trans, desc=self.desc,loc=self.location, strand=self.strand)  # noqa
+        Gene: NamedTuple = namedtuple('Gene', 'gene locus product prot_id trans desc loc strand dna')  # noqa
+        f = Gene(org=self.org, gene=self.gene, locus=self.locus, product=self.product, prot_id=self.prot_id, trans=self.trans, desc=self.desc,loc=self.location, strand=self.strand, dna=self.dna)  # noqa
         return f
 
 

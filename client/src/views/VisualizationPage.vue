@@ -1,7 +1,6 @@
 <template>
   <div>
     <NavBar></NavBar>
-    {{ $router.params }}
     <Carousel :data=data></Carousel>
     <Footer></Footer>
   </div>
@@ -32,7 +31,6 @@ export default {
     getPathway() {
       const main = 'http://localhost:5000/submission';
       const path = `${main}/${this.uuid}`;
-      console.log(path);
       axios.post(path, JSON.stringify({ key: this.uuid }))
         .then((res) => {
           this.data = res.data.key;

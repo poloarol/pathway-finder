@@ -75,8 +75,9 @@ class BioConnect:
         for rec in record:
             for align in rec.alignments:
                 accession = align.accession.strip('\n\n')
+                print(accession)
                 numList.append(accession)
         
         print('------ Ended blast ------')
 
-        return numList
+        return numList[:10]

@@ -89,14 +89,14 @@
                             id='similarity-input'
                             type="number"
                             v-model="form.similarity"
-                            placeholder='% Similarity' required></b-form-input>
+                            placeholder='% Similarity'></b-form-input>
                     </div>
                     <div class="col-6">
                         <b-form-input
                             id='basepairs-input'
                             type="number"
                             v-model="form.basepairs"
-                            placeholder='Number of Basepairs' required></b-form-input>
+                            placeholder='Number of Basepairs'></b-form-input>
                     </div>
                 </div>
             </b-form-group>

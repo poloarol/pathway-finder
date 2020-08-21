@@ -72,7 +72,7 @@ def retrieve_info(job_number):
         data = cursor.fetchone()
         cursor.close()
         connection.close()
-        return json.loads(data[0])
+        return data
     except Exception:
         print(traceback.format_exc())
 
@@ -108,17 +108,28 @@ def index():
 
         print('Launching finder ... ')
 
-        finder = Finder(email, accession=accession, coreGene=protein, similarity=float(similarity), bp=int(basepairs))
-        paths = finder.finder()
+        finder = None
 
-        for path in paths:
-            print(path)
+        if similarity and basepairs:
+            finder = Finder(email, accession=accession, coreGene=protein, similarity=float(similarity)/100, bp=int(basepairs))
+        elif similarity and not basepairs:
+            finder = Finder(email, accession=accession, coreGene=protein, similarity=float(similarity)/100)
+        elif not similarity and basepairs:
+            finder = Finder(email, accession=accession, coreGene=protein, bp=int(basepairs))
+        else:
+            finder = Finder(email, accession=accession, coreGene=protein)
+
+        # finder = Finder(email, accession=accession, coreGene=protein, similarity=float(similarity), bp=int(basepairs))
+        paths = finder.finder()
 
         print('Finder completed ... ')
 
-        if len(paths):
+        if paths:
+            print('Insert into DB')
             insert_job_number(data['uuid4'])
             insert_job_data(data['uuid4'], paths)
+        else:
+            print('empty')
 
 
         return jsonify('AMI Motivated')
@@ -138,7 +149,10 @@ def diagram(jobnumber):
 
         pathway = retrieve_info(data['key'])
 
-    data = {'key': pathway}
+    data = {'key': ast.literal_eval(pathway[0])}
+
+    if not pathway[0]:
+        return jsonify([])
 
     return jsonify(data)
 

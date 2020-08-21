@@ -1,9 +1,18 @@
 <template>
   <div>
     <NavBar></NavBar>
-    <div>
-      <Form id="form-submit" v-if="!uuid" @gotoggle='toggle'></Form>
-      <Confirmation :job=uuid v-if="uuid" id="message-submit"></Confirmation>
+    <div class="tab-display">
+        <b-tabs content-class="mt-3" justified>
+          <b-tab title='Process Job' active>
+            <div>
+              <Form id="form-submit" v-if="!uuid" @gotoggle='toggle'></Form>
+              <Confirmation :job=uuid v-if="uuid" id="message-submit"></Confirmation>
+            </div>
+          </b-tab>
+          <b-tab title='Retrieve Job'>
+            <RetrieveJob></RetrieveJob>
+          </b-tab>
+        </b-tabs>
     </div>
     <Footer></Footer>
   </div>
@@ -12,7 +21,7 @@
 <style>
 
   #form-submit{
-    margin-top: 5em;
+    margin-top: 3em;
     margin-left: 10em;
   }
 
@@ -24,6 +33,18 @@
     display: block;
   }
 
+  div.tab-display {
+    margin: 0 auto;
+    margin-top: 2em !important;
+    width: 90%;
+    color: black !important;
+  }
+
+  ul.nav.nav-tabs.nav-justified > li.nav-item > a.nav-link {
+    color: black !important;
+  }
+
+
 </style>
 
 <script>
@@ -32,6 +53,7 @@ import axios from 'axios';
 import NavBar from '@/components/NavBarComponent.vue';
 import Footer from '@/components/FooterComponent.vue';
 import Form from '@/components/FormComponent.vue';
+import RetrieveJob from '@/components/RetrieveJob.vue';
 import Confirmation from './ConfirmationPage.vue';
 
 export default {
@@ -41,6 +63,7 @@ export default {
     Footer,
     Form,
     Confirmation,
+    RetrieveJob,
   },
   data() {
     return {

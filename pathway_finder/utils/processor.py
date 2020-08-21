@@ -74,6 +74,7 @@ class ReadGB:
                 gene: str = 'N/A'
                 translation: str = 'N/A'
                 description: str = 'N/A'
+                seq: str = 'N/A'
                 for i, recs in enumerate(self._record.features):
                     if recs.type == 'CDS':
                         if 'translation' in recs.qualifiers:
@@ -90,7 +91,8 @@ class ReadGB:
                             description = recs.qualifiers['description'][0]
                         strand: int = int(recs.strand)
                         location: Tuple = (recs.location.start.position, recs.location.end.position)  # noqa
-                        g: GENE = Gene(gene, locus, product, prot_id, translation, description, location, strand)  # noqa
+                        seq = self._record.seq[int(location[0]) : int(location[1])]
+                        g: GENE = Gene(self.provideOrg(), gene, locus, product, prot_id, translation, description, location, strand, str(seq))  # noqa
                         self.GENOME.addGene(g)
             except KeyError:
                 raise KeyError('CDS key not found.')
@@ -125,13 +127,4 @@ class Writer:
 
     def parse(self):
         """Use the provided list of subsectioned genes, it provides a ist or SeqIO records."""  # noqa
-        sequences: str = ""
-        for genes in self._genes:
-            record = list()
-            for gene in genes:
-                translation = '\n'.join(textwrap.wrap(gene.trans, 60))
-                line: str = "{0} - {1}\n{2}".format(gene.prot_id, gene.protein, translation)
-                print(line)
-            #     value = self.produce_records(gene)
-            #     record.append(value)
-            # self._records.append(record)
+        translation: str = '\n'.join(textwrap.wrap(gene.trans, 60))
