@@ -8,6 +8,7 @@ import ast
 import sqlite3
 import traceback
 import uuid
+import yagmail
 import simplejson as json
 
 from finder import Finder
@@ -76,6 +77,15 @@ def retrieve_info(job_number):
     except Exception:
         print(traceback.format_exc())
 
+def send_email(email: str, job_id: str):
+    """
+    """
+
+    yag = yagmail.SMTP('adjon081@uottawa.ca')
+    subject: str = 'Your analysis has started {0}'.format(job_id)
+    body = 'From Captain Grievious'
+    yag.send(to=email, subject=subject, contents=body)
+
 
 # enable CORS
 cors = CORS(app, resources={r'/*': {'origin': '*'}})
@@ -100,24 +110,39 @@ def index():
         data = list(request.form.keys())[0]
         data = ast.literal_eval(data)
 
-        email: str = data['email'] if 'email' in data else ''
+        email: str = data['email']
         accession: str = data['accession'] if 'accession' in data else ''
         protein: str = data['protein'] if 'protein' in data else ''
+        sequence: str = data['sequence'] if 'sequence' in data else ''
         similarity: int = data['similarity'] if 'similarity' in data else ''
         basepairs: int = data['basepairs'] if 'basepairs' in data else ''
+        # expect: int = data['evalue'] if 'evalue' in data else 10
 
         print('Launching finder ... ')
 
+        # send_email(email, data['uuid4'])
+
         finder = None
 
-        if similarity and basepairs:
-            finder = Finder(email, accession=accession, coreGene=protein, similarity=float(similarity)/100, bp=int(basepairs))
-        elif similarity and not basepairs:
-            finder = Finder(email, accession=accession, coreGene=protein, similarity=float(similarity)/100)
-        elif not similarity and basepairs:
-            finder = Finder(email, accession=accession, coreGene=protein, bp=int(basepairs))
+        if sequence:
+            if similarity and basepairs:
+                finder = Finder(email=email, seq=sequence, similarity=float(similarity)/100, bp=int(basepairs))
+            elif similarity and not basepairs:
+                finder = Finder(email=email, seq=sequence, similarity=float(similarity)/100)
+            elif not similarity and basepairs:
+                finder = Finder(email=email, seq=sequence, bp=int(basepairs))
+            else:
+                finder = Finder(email=email, seq=sequence)
         else:
-            finder = Finder(email, accession=accession, coreGene=protein)
+            print(similarity, basepairs )
+            if similarity and basepairs:
+                finder = Finder(email=email, accession=accession, coreGene=protein, similarity=float(similarity)/100, bp=int(basepairs)) #noqa
+            elif similarity and not basepairs:
+                finder = Finder(email=email, accession=accession, coreGene=protein, similarity=float(similarity)/100) #noqa
+            elif not similarity and basepairs:
+                finder = Finder(email=email, accession=accession, coreGene=protein, bp=int(basepairs))
+            else:
+                finder = Finder(email=email, accession=accession, coreGene=protein)
 
         # finder = Finder(email, accession=accession, coreGene=protein, similarity=float(similarity), bp=int(basepairs))
         paths = finder.finder()
@@ -149,10 +174,14 @@ def diagram(jobnumber):
 
         pathway = retrieve_info(data['key'])
 
-    data = {'key': ast.literal_eval(pathway[0])}
+    if not pathway:
+        return jsonify({'key': [[]]})
+    
 
     if not pathway[0]:
-        return jsonify([])
+        return jsonify({'key': [[]]})
+
+    data = {'key': ast.literal_eval(pathway[0])}
 
     return jsonify(data)
 

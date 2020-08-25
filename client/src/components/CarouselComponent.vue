@@ -1,8 +1,8 @@
 <template>
     <div container fluid class='main'>
       <div class='carousel-main'>
-        <vue-carousel id='map' v-if='data'
-          :center='true' :items='1' :nav='true' :navigationEnable='true'>
+        <vue-carousel id='map' v-if='data' :items='1' :nav='true'
+          :navigationEnable='true' :center='true'>
           <canvas v-for='(datum, index) in data' :key=index :id="'canvas'+index"
             width='750' height='420'></canvas>
         </vue-carousel>
@@ -30,7 +30,6 @@
             @click="downloadFile(2)">
             <b-icon icon="download" aria-hidden="true"></b-icon> DNA FASTA
           </b-button>
-          <!-- +?report=genbank&log$=seqview&from=+'min'+&to=+'max'+ -->
           <b-button block variant="outline-dark" class="mb-2">
             <b-icon icon='cloud-download' class="cloud-icon"></b-icon>
             <b-link target='_blank' href="https://www.ncbi.nlm.nih.gov/nuccore/" id="link-modifier">

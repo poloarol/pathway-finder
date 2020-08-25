@@ -10,18 +10,20 @@
             </div>
           </b-tab>
           <b-tab title='Retrieve Job'>
-            <RetrieveJob></RetrieveJob>
+            <RetrieveJob id='retrieve-jobs'></RetrieveJob>
+            <br><br>
           </b-tab>
         </b-tabs>
     </div>
-    <Footer></Footer>
+    <br><br>
+    <Footer id='position-footer'></Footer>
   </div>
 </template>
 
 <style>
 
   #form-submit{
-    margin-top: 3em;
+    margin-top: 4em;
     margin-left: 10em;
   }
 
@@ -37,7 +39,15 @@
     margin: 0 auto;
     margin-top: 2em !important;
     width: 90%;
-    color: black !important;
+  }
+
+  #position-footer {
+    position: relative !important;
+  }
+
+  #retrieve-jobs {
+    margin-top: 5em;
+    margin-left: 10em;
   }
 
   ul.nav.nav-tabs.nav-justified > li.nav-item > a.nav-link {

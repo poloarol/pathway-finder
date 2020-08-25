@@ -62,7 +62,7 @@ class Gene:
 
     def values(self):
         """Obtain all genomic information."""
-        Gene: NamedTuple = namedtuple('Gene', 'gene locus product prot_id trans desc loc strand dna')  # noqa
+        Gene: NamedTuple = namedtuple('Gene', 'org  gene locus product prot_id trans desc loc strand dna')  # noqa
         f = Gene(org=self.org, gene=self.gene, locus=self.locus, product=self.product, prot_id=self.prot_id, trans=self.trans, desc=self.desc,loc=self.location, strand=self.strand, dna=self.dna)  # noqa
         return f
 

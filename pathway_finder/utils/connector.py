@@ -47,6 +47,7 @@ class BioConnect:
     """
 
     email: str
+    # expect: int
     db = 'nucleotide'
     fileFormat = 'XML'
     flavour = 'tblastn'

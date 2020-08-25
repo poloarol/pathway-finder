@@ -78,6 +78,7 @@ class Finder:
     """
 
     email: str
+    seq: str = None
     accession: str = None
     coreGene: str = None
     bp: int = 2500
@@ -89,21 +90,27 @@ class Finder:
 
     def finder(self):
         """ Calls other classes to generate a directory of similar pathways as the queried one."""  # noqa
-        gb = self.bconnect.load(self.accession)
-        rb = ReadGB(gb)
-        genome = rb.readfile()
-        organism = rb.provideOrg()
+        gb = None
+        pathway = None
+        coregene = None
+        output = None
+        pathways = None
 
-        if not genome:
-            sys.exit()
+        if self.accession:
+            gb = self.bconnect.load(self.accession)
+            rb = ReadGB(gb)
+            genome = rb.readfile()
+            organism = rb.provideOrg()
+            pathway: List = genome.build(self.coreGene, self.bp)
+            coregene: str = genome.getCore()
+            output: List = self.bconnect.bioBlast(self.coreGene)
+            # pathways: List = self.repProcedure(output, self.bp, coregene, self.similarity)  # noqa
+            # pathway.append(pathways)
+        else:
+            output: List = self.bconnect.bioBlast(self.seq)
+            pathways: List = self.repProcedure(output, self.bp, self.seq, self.similarity)  # noqa
 
-        pathway: List = genome.build(self.coreGene, self.bp)
-        coregene: str = genome.getCore()
-        output: List = self.bconnect.bioBlast(self.coreGene)
-        pathways: List = self.repProcedure(output, self.bp, coregene, self.similarity)  # noqa
-        pathway.append(pathways)
-
-        return pathways
+        return pathway
 
     #
     # def write_fasta(self, pathways: List) -> None:
