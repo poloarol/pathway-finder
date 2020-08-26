@@ -102,22 +102,16 @@ class Finder:
             genome = rb.readfile()
             organism = rb.provideOrg()
             pathway: List = genome.build(self.coreGene, self.bp)
-            coregene: str = genome.getCore()
+            genome.setCore(self.coreGene)
             output: List = self.bconnect.bioBlast(self.coreGene)
-            # pathways: List = self.repProcedure(output, self.bp, coregene, self.similarity)  # noqa
-            # pathway.append(pathways)
+            coregene = genome.getCore()
+            pathways: List = self.repProcedure(output, self.bp, coregene, self.similarity)  # noqa
+            pathway.append(pathways)
         else:
             output: List = self.bconnect.bioBlast(self.seq)
             pathways: List = self.repProcedure(output, self.bp, self.seq, self.similarity)  # noqa
 
-        return pathway
-
-    #
-    # def write_fasta(self, pathways: List) -> None:
-    #     """Create a gb files of similar pathways compared to queried gene."""
-    #     writer = Writer(pathways)
-    #     writer.parse()
-    #     # writer.writeGB()
+        return pathways
 
     def repProcedure(self, items: List, bp: int, coreGene: str, similarity: float):  # noqa
         pathway: List = list()
@@ -135,9 +129,9 @@ class Finder:
                 genes: List = genome.findCoreGeneBySimilarity(coreGene, similarity)
                 if genes:
                     for gene in genes:
-                        genome.setCore(gene)
                         path: List = genome.buildsimilarity(gene, bp)
-                        pathway.append(path)
+                        if path:
+                            pathway.append(path)
                 counter = counter + 1
                 if(counter % 3 == 0):  # Used because of NCBI's policy on requests without API key. with API key, change to 10  # noqa
                     time.sleep(3)
@@ -151,13 +145,12 @@ class Finder:
         """ Flattens the list i.e. removes nested list in output"""
         return [*chain.from_iterable(x if isinstance(x[0], tuple) else [x] for x in path)]  # noqa
 
-# finder = Finder(email, accession="KK037233.1", coreGene="EWM62968.1", bp=500, similarity=0.8)  # noqa
+# finder = Finder('adjon081@uottawa.ca', accession="KK037233.1", coreGene="EWM62968.1", bp=500, similarity=0.8)  # noqa
 # paths = finder.finder()
 # for path in paths:
 #     if path:
 #         print('-----------------------------------------\n')
 #         print(path)
-#         print('-----------------------------------------')
 
 
 # finder.write_fasta(paths)

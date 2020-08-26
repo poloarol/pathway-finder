@@ -76,7 +76,6 @@
 </style>
 
 <script>
-// import jQuery from 'jquery';
 import * as Scribl from '../assets/js/scribl.bundle';
 
 export default {
@@ -88,8 +87,6 @@ export default {
     return {
       slides: [],
       genes: this.data,
-      min: 0,
-      max: 0,
     };
   },
   methods: {
@@ -134,14 +131,17 @@ export default {
     },
   },
   async updated() {
+    // let min = 0;
+    // let max = 0;
     this.$nextTick(() => {
       for (let i = 0; i < this.data.length; i += 1) {
         const tmpID = document.querySelector(`#canvas${i}`);
         const tmpCanvas = new Scribl.Scribl(tmpID, 500);
+
         const track = tmpCanvas.addTrack();
-        // let name;
-        let genes;
+        // let min = 0;
         // let max = 0;
+
         for (let j = 0; j < this.data[i].length; j += 1) {
           const color = (this.data[i][j].strand === 1) ? '#998ec3' : '#f1a340';
           const { loc } = this.data[i][j];
@@ -153,8 +153,8 @@ export default {
           const { product } = this.data[i][j];
           const protID = this.data[i][j].prot_id;
           const { trans } = this.data[i][j];
-          this.min = this.min ? this.min < loc[0] : loc[0];
-          this.max = this.max ? this.max > loc[1] : loc[1];
+          // min = min ? min < loc[0] : loc[0];
+          // max = max ? max > loc[1] : loc[1];
           /*
             eslint max-len: ["error", { "code": 150 }]
           */
@@ -162,12 +162,12 @@ export default {
           /*
             eslint max-len: ["error", { "code": 150 }]
           */
-          const organism = Object.prototype.hasOwnProperty.call(this.data[i][j], 'org') ? this.data[i][j].dna : ['Homo Sapiens', 'ABCDEF.1'];
-          genes = track.addFeature(new Scribl.BlockArrow('track', loc[1], length, direction));
+          const organism = Object.prototype.hasOwnProperty.call(this.data[i][j], 'org') ? this.data[i][j].org : ['Homo Sapiens', 'ABCDEF.1'];
+          const genes = track.addFeature(new Scribl.BlockArrow('track', loc[1], length, direction));
           genes.color = color;
           genes.onMouseover = locus;
-          let link = document.getElementById('link-modifier').href;
-          link = `${link}${organism[1].trim()}?report=genbank&log$=seqview&from=${this.min}&to=${this.max}`;
+          // let link = document.getElementById('link-modifier').href;
+          // link = `${link}${organism[1].trim()}?report=genbank&log$=seqview&from=${min}&to=${max}`;
           genes.onClick = function hushpuppy() {
             document.getElementById('protein-file-icon').setAttribute('value', trans);
             document.getElementById('dna-file-icon').setAttribute('value', dna);
@@ -176,9 +176,10 @@ export default {
             document.getElementById('gene').innerHTML = `<b>Gene</b>: ${gene}`;
             document.getElementById('prot').innerHTML = `<b>Protein</b>: ${product}`;
             document.getElementById('loc').innerHTML = `<b>Location</b>: ${loc[0]} - ${loc[1]}`;
-            document.getElementById('link-modifier').setAttribute('href', link);
+            // document.getElementById('link-modifier').setAttribute('href', link);
           };
         }
+
         tmpCanvas.draw();
       }
     });

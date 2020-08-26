@@ -92,23 +92,25 @@ class Genome:
     def findCoreGeneBySimilarity(self, seq: str, similarity: float):
         """Determine the core gene in blast output by percentage similarity of seq compared."""  # noqa
         genes: List = list()
-        for keys in self.GENOME:
-            val = Levenshtein.ratio(self.GENOME[keys][4], seq)
+        for key in self.GENOME:
+            val = Levenshtein.ratio(self.GENOME[key].trans, seq)
             if val >= similarity:
-                genes.append(keys)
+                genes.append(key)
         return genes
 
-    def setCore(self, ident: Tuple):
+    def setCore(self, ident: str):
         """Public method to set Genome core gene."""
         self.__setCore__(ident)
 
-    def __setCore__(self, ident: Tuple):
+    def __setCore__(self, ident: str):
         """Private method to set Genome core gene."""
-        self.core = ident
+        for key in self.GENOME:
+            if key == ident:
+                self.core = self.GENOME[key].trans
 
     def getCore(self):
-        """Provides the core genome's core gene"""
-        return self.GENOME[self.core][4]
+        """Provides the genome's core gene"""
+        return self.core
 
     def build(self, ident: str, bp: int):
         """Build a genomic pathway based on identifier."""
